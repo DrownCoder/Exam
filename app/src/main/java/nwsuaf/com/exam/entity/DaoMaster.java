@@ -22,22 +22,22 @@ public class DaoMaster extends AbstractDaoMaster {
 
     /** Creates underlying database table using DAOs. */
     public static void createAllTables(Database db, boolean ifNotExists) {
+        answerDao.createTable(db, ifNotExists);
         examdateDao.createTable(db, ifNotExists);
         lcerrorDao.createTable(db, ifNotExists);
         lcproblemDao.createTable(db, ifNotExists);
-        ProblemsDao.createTable(db, ifNotExists);
-        answerDao.createTable(db, ifNotExists);
         netproblemDao.createTable(db, ifNotExists);
+        ProblemsDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
+        answerDao.dropTable(db, ifExists);
         examdateDao.dropTable(db, ifExists);
         lcerrorDao.dropTable(db, ifExists);
         lcproblemDao.dropTable(db, ifExists);
-        ProblemsDao.dropTable(db, ifExists);
-        answerDao.dropTable(db, ifExists);
         netproblemDao.dropTable(db, ifExists);
+        ProblemsDao.dropTable(db, ifExists);
     }
 
     /**
@@ -56,12 +56,12 @@ public class DaoMaster extends AbstractDaoMaster {
 
     public DaoMaster(Database db) {
         super(db, SCHEMA_VERSION);
+        registerDaoClass(answerDao.class);
         registerDaoClass(examdateDao.class);
         registerDaoClass(lcerrorDao.class);
         registerDaoClass(lcproblemDao.class);
-        registerDaoClass(ProblemsDao.class);
-        registerDaoClass(answerDao.class);
         registerDaoClass(netproblemDao.class);
+        registerDaoClass(ProblemsDao.class);
     }
 
     public DaoSession newSession() {

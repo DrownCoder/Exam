@@ -5,6 +5,9 @@ import android.app.Application;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+
+import com.uuzuche.lib_zxing.activity.ZXingLibrary;
+
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.util.VolleyUtil;
 
@@ -22,6 +25,7 @@ public class MainApplication extends Application
     {
         super.onCreate();
         initRequestQueue();
+        ZXingLibrary.initDisplayOpinion(this);
         //initImageLoader();
         instance = this;
     }

@@ -26,7 +26,7 @@ import nwsuaf.com.exam.fragment.UserFragment;
 import nwsuaf.com.exam.fragment.ExamFragment;
 import nwsuaf.com.exam.util.ImageLoaderForLocal;
 
-public class MainActivity2 extends BaseActivity implements View.OnClickListener {
+public class StudentActivity extends BaseActivity implements View.OnClickListener {
     private ViewPager viewPager;
     private HomePageAdapter mAapter;
     private List<Fragment> fragmentList;
