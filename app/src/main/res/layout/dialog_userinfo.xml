@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/nwsuaf.com.exam"
+    android:layout_gravity="center"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    >
+    <cn.iwgang.countdownview.CountdownView
+        android:visibility="gone"
+        android:id="@+id/dialog_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:isHideTimeBackground="true"
+        app:isShowDay="false"
+        app:isShowHour="false"
+        app:isShowMinute="true"
+        app:isShowSecond="true"
+        app:isShowMillisecond="false"
+        app:timeTextColor="#000000"
+        app:timeTextSize="22sp"
+        app:isTimeTextBold="true"
+        app:suffixGravity="bottom"
+        app:suffixTextColor="#000000"
+        app:suffixTextSize="12sp"
+        app:suffixMinute="分"
+        app:suffixSecond="秒"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:id="@+id/tv_id_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/user_name"
+            android:textSize="@dimen/main_text_size"
+            android:textColor="@color/textblack"
+            android:padding="15px"
+            />
+        <TextView
+            android:id="@+id/tv_id_userid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/user_id"
+            android:textSize="@dimen/main_text_size"
+            android:textColor="@color/textblack"
+            android:padding="15px"
+            />
+        <TextView
+            android:id="@+id/tv_id_userclass_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/user_classname"
+            android:textSize="@dimen/main_text_size"
+            android:textColor="@color/textblack"
+            android:padding="15px"
+            />
+    </LinearLayout>
+
+</RelativeLayout>
+

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/contentwhite"
+              android:orientation="vertical">
+    <include layout="@layout/top"/>
+    <LinearLayout
+        android:id="@+id/ll_id_singlechoice"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:layout_marginLeft="10px"
+        android:layout_marginRight="10px"
+        android:layout_marginTop="10px"
+        android:orientation="horizontal" >
+        <ImageView
+            android:layout_marginLeft="20px"
+            android:layout_width="16px"
+            android:layout_height="16px"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/point1"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="9"
+            android:gravity="center_vertical"
+            android:paddingLeft="20px"
+            android:singleLine="true"
+            android:text="@string/tv_single"
+            android:textColor="@color/textblack"
+            android:textSize="@dimen/tv_littlesize"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_id_single"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="2px"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:textColor="@color/textblacklight"
+            android:layout_marginRight="10px"
+            android:textSize="@dimen/tv_littlesize"
+            android:text="58道"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/lightblack"/>
+    <LinearLayout
+        android:id="@+id/ll_id_multiplechoice"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:layout_marginLeft="10px"
+        android:layout_marginRight="10px"
+        android:layout_marginTop="10px"
+        android:orientation="horizontal" >
+        <ImageView
+            android:layout_marginLeft="20px"
+            android:layout_width="16px"
+            android:layout_height="16px"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/point2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="9"
+            android:gravity="center_vertical"
+            android:paddingLeft="20px"
+            android:singleLine="true"
+            android:text="@string/tv_multiple"
+            android:textColor="@color/textblack"
+            android:textSize="@dimen/tv_littlesize"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_id_mult"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="2px"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:textColor="@color/textblacklight"
+            android:layout_marginRight="10px"
+            android:textSize="@dimen/tv_littlesize"
+            android:text="18道"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/lightblack"/>
+    <LinearLayout
+        android:id="@+id/ll_id_judgechoice"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:layout_marginLeft="10px"
+        android:layout_marginRight="10px"
+        android:layout_marginTop="10px"
+        android:orientation="horizontal" >
+        <ImageView
+            android:layout_marginLeft="20px"
+            android:layout_width="16px"
+            android:layout_height="16px"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/point3"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="9"
+            android:gravity="center_vertical"
+            android:paddingLeft="20px"
+            android:singleLine="true"
+            android:text="@string/tv_judge"
+            android:textColor="@color/textblack"
+            android:textSize="@dimen/tv_littlesize"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_id_judge"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="2px"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:textColor="@color/textblacklight"
+            android:layout_marginRight="10px"
+            android:textSize="@dimen/tv_littlesize"
+            android:text="25道"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/lightblack"/>
+    <LinearLayout
+        android:id="@+id/ll_id_picturechoice"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:layout_marginLeft="10px"
+        android:layout_marginRight="10px"
+        android:layout_marginTop="10px"
+        android:orientation="horizontal" >
+        <ImageView
+            android:layout_marginLeft="20px"
+            android:layout_width="16px"
+            android:layout_height="16px"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/point4"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="9"
+            android:gravity="center_vertical"
+            android:paddingLeft="20px"
+            android:singleLine="true"
+            android:text="@string/tv_picture"
+            android:textColor="@color/textblack"
+            android:textSize="@dimen/tv_littlesize"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_id_pic"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="2px"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:textColor="@color/textblacklight"
+            android:layout_marginRight="10px"
+            android:textSize="@dimen/tv_littlesize"
+            android:text="10道"
+            />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:background="@color/lightblack"/>
+</LinearLayout>

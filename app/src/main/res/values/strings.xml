@@ -1,0 +1,71 @@
+<resources>
+    <string name="app_name">Exam</string>
+    <string name="action_settings">Settings</string>
+    <string name="errorproblem">错题库</string>
+    <string name="special">专项练习</string>
+    <string name="tv_finalexam">考试入口</string>
+    <string name="tv_orderexe">顺序练习</string>
+    <string name="tv_randomexe">随机练习</string>
+    <string name="tv_mineexam">模拟自测</string>
+    <string name="tv_examnote">考前须知</string>
+    <string name="tv_login">考生登录</string>
+    <string name="tv_single">单项选择</string>
+    <string name="tv_multiple">多项选择</string>
+    <string name="tv_judge">判断题</string>
+    <string name="tv_picture">图片识别</string>
+    <string name="tv_singlechoice">单选题</string>
+    <string name="tv_picturechoice">图片识别题</string>
+    <string name="tv_answer">请在该处填入正确答案</string>
+    <string name="tv_postanswer">交卷</string>
+    <string name="tv_true">正确</string>
+    <string name="tv_false">错误</string>
+    <string name="tv_time">用时</string>
+    <string name="tv_seeerror">查看错题</string>
+    <string name="tv_seeexam">查看试卷</string>
+    <string name="tv_retry">再来一次</string>
+    <string name="title_activity_result">ResultActivity</string>
+    <string name="nosource">抱歉，暂时没有数据</string>
+    <string name="top_b1_name1">自测</string>
+    <string name="top_b1_name2">考试</string>
+    <string name="top_b1_name3">我的</string>
+    <string name="bottomtab_name1">自测</string>
+    <string name="bottomtab_name2">考试</string>
+    <string name="bottomtab_name3">我的</string>
+    <string name="exam_record">练习记录</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tv_or">Or</string>
+    <string name="tv_and">And</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="tv_pass">通过</string>
+    <string name="tv_unpass">未通过</string>
+    <string name="card_date">考试时间： %s</string>
+    <string name="card_total">总题量： %s道</string>
+    <string name="card_right">正确： %s道</string>
+    <string name="card_error">错误： %s道</string>
+    <string name="card_time">用时： %s</string>
+    <string name="title_activity_login">Sign in</string>
+<!--用户信息-->
+    <string name="user_name">用户名： %s</string>
+    <string name="user_id">账号： %s</string>
+    <string name="user_classname">班级： %s</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="tv_uid">账号</string>
+    <string name="tv_passwd">密码</string>
+    <string name="login">登录</string>
+</resources>

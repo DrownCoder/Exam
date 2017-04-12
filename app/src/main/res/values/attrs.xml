@@ -1,0 +1,20 @@
+<resources>
+
+    <!-- Declare custom theme attributes that allow changing which styles are
+         used for button bars depending on the API level.
+         ?android:attr/buttonBarStyle is new as of API 11 so this is
+         necessary to support previous API levels. -->
+    <declare-styleable name="ButtonBarContainerTheme">
+        <attr name="metaButtonBarStyle" format="reference" />
+        <attr name="metaButtonBarButtonStyle" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="DriverProgress">
+        <attr name="panel_radius" format="dimension"/>
+        <attr name="panel_width" format="dimension"/>
+        <attr name="panel_density" format="integer"/>
+        <attr name="panel_point_radius" format="dimension"/>
+        <attr name="panel_progress" format="integer" />
+        <attr name="panel_max" format="integer"/>
+        <attr name="indicator_radius" format="dimension"/>
+    </declare-styleable>
+</resources>

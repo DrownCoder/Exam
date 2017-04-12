@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/contentblack">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:id="@+id/rl_id_examtype"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/bohegreen"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_id_special"
+                    android:layout_width="100px"
+                    android:layout_height="100px"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20px"
+                    android:src="@drawable/wendang_white"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iv_id_special"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="10px"
+                    android:gravity="center"
+                    android:text="@string/tv_examnote"
+                    android:textColor="@color/contentwhite"
+                    android:textSize="@dimen/main_text_size"
+                    android:textStyle="bold"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_id_mineexam"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/contentwhite"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/iv_id_mineexam"
+                    android:layout_width="100px"
+                    android:layout_height="100px"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20px"
+                    android:src="@drawable/peo_black"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iv_id_mineexam"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="10px"
+                    android:gravity="center"
+                    android:text="@string/tv_login"
+                    android:textColor="@color/textblacklight"
+                    android:textSize="@dimen/main_text_size"
+                    android:textStyle="bold"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="100px"
+            android:layout_height="100px"
+            android:layout_gravity="center"
+            android:src="@drawable/white_circle"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/green_circle"
+            android:gravity="center"
+            android:text="@string/tv_and"
+            android:textColor="@color/contentwhite"
+            android:textStyle="bold"
+            />
+    </FrameLayout>
+
+    <nwsuaf.com.exam.customview.SubmitButton
+        android:id="@+id/bt_id_exam"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:padding="50dp"
+        android:text="考试入口"
+        android:textSize="@dimen/main_text_size"
+        app:sub_btn_background="@color/white"
+        app:sub_btn_duration="1000"
+        app:sub_btn_line_color="@color/bohegreen"
+        app:sub_btn_ripple_color="@color/bohegreen"
+        app:sub_btn_tick_color="@color/white"
+        />
+</RelativeLayout>

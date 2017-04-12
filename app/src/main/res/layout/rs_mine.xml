@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res/nwsuaf.com.exam"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/contentblack"
+              android:orientation="vertical">
+
+    <include layout="@layout/top" />
+
+    <LinearLayout
+        android:id="@+id/ll_id_time"
+        android:layout_width="match_parent"
+        android:layout_height="100px"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_gravity="center"
+            android:layout_marginLeft="40px"
+            android:src="@drawable/time" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10px"
+            android:gravity="center"
+            android:text="@string/tv_time"
+            android:textColor="@color/textblacklight"
+            android:textSize="@dimen/main_text_size" />
+
+        <TextView
+            android:id="@+id/tv_id_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10px"
+            android:gravity="center"
+            android:text="00:04"
+            android:textColor="@color/textblacklight"
+            android:textSize="@dimen/main_text_size" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_id_time"
+        android:layout_centerHorizontal="true"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingBottom="40px">
+
+        <nwsuaf.com.exam.customview.DriverProgress
+            android:id="@+id/dp_id_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            app:indicator_radius="10dp"
+            app:panel_density="10"
+            app:panel_max="100"
+            app:panel_point_radius="3dp"
+            app:panel_progress="15"
+            app:panel_radius="75dp"
+            app:panel_width="45dp" />
+
+        <TextView
+            android:id="@+id/tv_id_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dp_id_result"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20px"
+            android:text="50"
+            android:textColor="@color/lightred"
+            android:textSize="90px"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dp_id_result"
+            android:layout_marginLeft="15px"
+            android:layout_marginTop="70px"
+            android:layout_toRightOf="@+id/tv_id_result"
+            android:text="分"
+            android:textSize="40px" />
+
+        <TextView
+            android:id="@+id/tv_id_ispass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/dp_id_result"
+            android:layout_marginRight="25px"
+            android:layout_marginTop="70px"
+            android:text="@string/tv_pass"
+            android:textColor="@color/green"
+            android:textSize="40px" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_marginTop="50px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/contentblack"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:background="@color/white"
+            android:id="@+id/rl_id_seeerror"
+            android:layout_width="match_parent"
+            android:layout_height="120px"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_id_seeerror"
+                android:layout_width="80px"
+                android:layout_height="80px"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="40px"
+                android:scaleType="fitXY"
+                android:src="@drawable/errormine" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="30px"
+                android:layout_toRightOf="@+id/iv_id_seeerror"
+                android:gravity="center"
+                android:text="@string/tv_seeerror"
+                android:textColor="@color/textblack"
+                android:textSize="@dimen/main_text_size" />
+
+            <ImageView
+                android:layout_width="30px"
+                android:layout_height="30px"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="40px"
+                android:src="@drawable/right" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/lightblack" />
+
+        <RelativeLayout
+            android:background="@color/white"
+            android:layout_marginTop="10px"
+            android:id="@+id/rl_id_seeexam"
+            android:layout_width="match_parent"
+            android:layout_height="120px"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_id_seeexam"
+                android:layout_width="80px"
+                android:layout_height="80px"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="40px"
+                android:scaleType="fitXY"
+                android:src="@drawable/seeexam" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="30px"
+                android:layout_toRightOf="@+id/iv_id_seeexam"
+                android:gravity="center"
+                android:text="@string/tv_seeexam"
+                android:textColor="@color/textblack"
+                android:textSize="@dimen/main_text_size" />
+
+            <ImageView
+                android:layout_width="30px"
+                android:layout_height="30px"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="40px"
+                android:src="@drawable/right" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/lightblack" />
+
+        <RelativeLayout
+            android:background="@color/white"
+            android:layout_marginTop="10px"
+            android:id="@+id/rl_id_retry"
+            android:layout_width="match_parent"
+            android:layout_height="120px"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/iv_id_retry"
+                android:layout_width="80px"
+                android:layout_height="80px"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="40px"
+                android:scaleType="fitXY"
+                android:src="@drawable/retry" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="30px"
+                android:layout_toRightOf="@+id/iv_id_retry"
+                android:gravity="center"
+                android:text="@string/tv_retry"
+                android:textColor="@color/textblack"
+                android:textSize="@dimen/main_text_size" />
+
+            <ImageView
+                android:layout_width="30px"
+                android:layout_height="30px"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="40px"
+                android:src="@drawable/right" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2px"
+            android:background="@color/lightblack" />
+    </LinearLayout>
+
+</LinearLayout>

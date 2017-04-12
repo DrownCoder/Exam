@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval"
+    android:useLevel="false" >
+    <padding
+        android:left="4px"
+        android:top="2px"
+        android:right="4px"
+        android:bottom="2px" />
+    <solid
+        android:color="@color/circlebiuecontent" />
+    <stroke
+        android:width="2px"
+        android:color="@color/circlebluestroke" />
+    <size android:width="60px"
+        android:height="60px" />
+</shape>

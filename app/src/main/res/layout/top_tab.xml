@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="110px"
+              android:background="@color/mainblue"
+              android:gravity="center"
+              android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/top_type_threetext"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="visible"
+        android:weightSum="3">
+
+        <TextView
+            android:id="@+id/top_id_threetext1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="10px"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/top_b1_name1"
+            android:textColor="@color/white"
+            android:textSize="@dimen/main_text_size" />
+
+        <TextView
+            android:id="@+id/top_id_threetext2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="10px"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/top_b1_name2"
+            android:textColor="@color/white"
+            android:textSize="@dimen/main_text_size" />
+
+        <TextView
+            android:id="@+id/top_id_threetext3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="10px"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/top_b1_name3"
+            android:textColor="@color/white"
+            android:textSize="@dimen/main_text_size" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/top_id_layoutmoveimage"
+        android:layout_width="210dp"
+        android:layout_height="3dp"
+        >
+
+        <ImageView
+            android:id="@+id/top_id_moveimage"
+            android:layout_width="70dp"
+            android:layout_height="3dp"
+            android:scaleType="centerInside"
+            android:background="@drawable/top_tab_progress" />
+    </RelativeLayout>
+
+</LinearLayout>

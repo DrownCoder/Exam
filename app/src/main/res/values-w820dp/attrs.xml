@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="RippleView">
+        <attr name="mrippleColor" format="color" />
+        <attr name="alphaFactor" format="float" />
+        <attr name="hover" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="SubmitButton">
+        <attr name="sub_btn_background" format="color" />
+        <attr name="sub_btn_tick_color" format="color" />
+        <attr name="sub_btn_line_color" format="color" />
+        <attr name="sub_btn_ripple_color" format="color" />
+        <attr name="sub_btn_duration" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="WheelIndicatorView">
+        <attr name="itemsLineWidth" format="dimension" />
+        <attr name="filledPercent" format="integer" />
+        <attr name="backgroundColor" format="color" />
+    </declare-styleable>
+</resources>
