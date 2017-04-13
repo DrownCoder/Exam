@@ -72,4 +72,10 @@
     <string name="myclass_teacher">我的班级</string>
     <string name="addclass">创建班级</string>
     <string name="create_class_name">班级名字</string>
+    <string name="stustate_id">学号： %s</string>
+    <string name="stustate_join">状态： %s</string>
+    <string name="stustate_submit">考试： %s</string>
+    <string name="ke">科名</string>
+    <string name="shu">属名</string>
+    <string name="zhong">种名</string>
 </resources>

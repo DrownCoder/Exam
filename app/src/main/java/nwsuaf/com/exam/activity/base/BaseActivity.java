@@ -1,8 +1,12 @@
 package nwsuaf.com.exam.activity.base;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
+import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
@@ -12,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,8 +27,10 @@ import java.util.List;
 import nwsuaf.com.exam.R;
 
 
-public class BaseActivity extends AutoLayoutActivity{
-    public void TopView(){
+public class BaseActivity extends AutoLayoutActivity {
+    private ProgressDialog dialog;
+
+    public void TopView() {
         //透明状态栏
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT_WATCH) {
             Window window = getWindow();
@@ -55,51 +62,31 @@ public class BaseActivity extends AutoLayoutActivity{
         });
     }
 
-    public void setTitle(String title){
+    public void setTitle(String title) {
         ((TextView) findViewById(R.id.tv_id_centertext)).setText(title);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        FragmentManager fm = getSupportFragmentManager();
-        int index = requestCode >> 16;
-        if (index != 0) {
-            index--;
-            if (fm.getFragments() == null || index < 0
-                    || index >= fm.getFragments().size()) {
-                Log.w("TAG", "Activity result fragment index out of range: 0x"
-                        + Integer.toHexString(requestCode));
-                return;
-            }
-            Fragment frag = fm.getFragments().get(index);
-            if (frag == null) {
-                Log.w("TAG", "Activity result no fragment exists for index: 0x"
-                        + Integer.toHexString(requestCode));
-            } else {
-                handleResult(frag, requestCode, resultCode, data);
-            }
-            return;
-        }
-
+    public void setRightIcon(int imgId) {
+        ((ImageView) findViewById(R.id.iv_id_rightbtn)).setImageResource(imgId);
     }
 
-    /**
-     * 递归调用，对所有子Fragement生效
-     *
-     * @param frag
-     * @param requestCode
-     * @param resultCode
-     * @param data
-     */
-    private void handleResult(Fragment frag, int requestCode, int resultCode,
-                              Intent data) {
-        frag.onActivityResult(requestCode & 0xffff, resultCode, data);
-        List<Fragment> frags = frag.getChildFragmentManager().getFragments();
-        if (frags != null) {
-            for (Fragment f : frags) {
-                if (f != null)
-                    handleResult(f, requestCode, resultCode, data);
-            }
+    public void setRightClickedListener(View.OnClickListener onClickListener) {
+        ((ImageView) findViewById(R.id.iv_id_rightbtn)).setOnClickListener(onClickListener);
+    }
+
+    public void setRightText(String str) {
+        ((TextView) findViewById(R.id.tv_id_righttext)).setText(str);
+    }
+
+    public void showProgressDialog(Context context) {
+        dialog = new ProgressDialog(context);
+        dialog.show();
+    }
+
+    public void dismissProgressDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+            dialog = null;
         }
     }
 }

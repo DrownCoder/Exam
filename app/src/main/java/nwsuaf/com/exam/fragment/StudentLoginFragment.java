@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,24 +21,30 @@ import com.uuzuche.lib_zxing.activity.CodeUtils;
 import java.lang.ref.WeakReference;
 
 import nwsuaf.com.exam.R;
+import nwsuaf.com.exam.activity.ExamFinalActivity;
 import nwsuaf.com.exam.activity.LoginActivity;
 import nwsuaf.com.exam.activity.MainActivity;
 import nwsuaf.com.exam.activity.MyUIActivity;
+import nwsuaf.com.exam.activity.StudentActivity;
 import nwsuaf.com.exam.activity.TeacherActivity;
 import nwsuaf.com.exam.app.AppConstants;
 import nwsuaf.com.exam.customview.CustomDialog;
 import nwsuaf.com.exam.customview.RippleView;
 import nwsuaf.com.exam.entity.netmodel.NetObject_Peo;
+import nwsuaf.com.exam.util.DensityUtils;
 import nwsuaf.com.exam.util.GetUserInfo;
 import nwsuaf.com.exam.util.GsonRequest;
 import nwsuaf.com.exam.util.VolleyUtil;
 
 public class StudentLoginFragment extends Fragment {
-    private EditText tv_id_uid,tv_id_passwd;
+    private EditText tv_id_uid, tv_id_passwd;
     private RippleView rp_id_login;
     private RequestQueue queue;
     private TextView tv_classname;
+    private ImageView mEntry;
+
     private static final int REQUEST_CODE = 0x111;
+
     public StudentLoginFragment() {
         // Required empty public constructor
     }
@@ -67,13 +74,14 @@ public class StudentLoginFragment extends Fragment {
                                 startActivityForResult(intentReadUi, REQUEST_CODE);
                             }
                         })
-                        .setPositiveButton("手动输入",new DialogInterface.OnClickListener(){
+                        .setPositiveButton("手动输入", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
+                                createInputDialog();
                             }
                         })
-                .setMessage("班级录入方式");
+                        .setMessage("班级录入方式");
                 CustomDialog dialog = customBuilder.create();
                 dialog.show();
             }
@@ -85,11 +93,34 @@ public class StudentLoginFragment extends Fragment {
                  * 等接口
                  */
                 //getNetWorkDatas();
-                Intent intent = new Intent(getActivity(), TeacherActivity.class);
+                Intent intent = new Intent(getActivity(), ExamFinalActivity.class);
                 startActivity(intent);
                 getActivity().finish();
             }
         });
+        mEntry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), StudentActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        });
+    }
+
+    private void createInputDialog() {
+        final EditText editText = new EditText(getActivity());
+        CustomDialog.Builder builder = new CustomDialog.Builder(getActivity());
+        builder.setTitle("请输入班级名称")
+                .setContentView(editText)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setClassName(editText.getText().toString());
+                        dialog.dismiss();
+                    }
+                })
+                .create().show();
     }
 
     private void initView(View view) {
@@ -98,6 +129,7 @@ public class StudentLoginFragment extends Fragment {
         rp_id_login = (RippleView) view.findViewById(R.id.rp_id_login);
 
         tv_classname = (TextView) view.findViewById(R.id.tv_classname);
+        mEntry = (ImageView) view.findViewById(R.id.iv_id_quickentry);
     }
 
 
@@ -113,7 +145,7 @@ public class StudentLoginFragment extends Fragment {
         queue = VolleyUtil.getRequestQueue();
         GsonRequest<NetObject_Peo> gsonRequest = new GsonRequest<NetObject_Peo>(
                 url, NetObject_Peo.class,
-                mListener,mErrorListener);
+                mListener, mErrorListener);
         queue.add(gsonRequest);
     }
 
@@ -125,29 +157,29 @@ public class StudentLoginFragment extends Fragment {
             activityWeakReference = new WeakReference<Activity>(activity);
             //callbackWeakReference = new WeakReference<VolleyCallback>(callback);
         }
+
         @Override
         public void onResponse(NetObject_Peo data) {
             Activity act = activityWeakReference.get();
             //VolleyCallback vc = callbackWeakReference.get();
             if (act != null) {
                 int returncode = data.getReturncode();
-                if(returncode == AppConstants.DONTEXIST){
-                    Toast.makeText(act,"用户不存在！",Toast.LENGTH_SHORT).show();
-                }
-                else if(returncode == AppConstants.WRONGPASSWORD){
-                    Toast.makeText(act,"密码错误！",Toast.LENGTH_SHORT).show();
-                }
-                else if(returncode == AppConstants.SUCCESSLOGIN){
+                if (returncode == AppConstants.DONTEXIST) {
+                    Toast.makeText(act, "用户不存在！", Toast.LENGTH_SHORT).show();
+                } else if (returncode == AppConstants.WRONGPASSWORD) {
+                    Toast.makeText(act, "密码错误！", Toast.LENGTH_SHORT).show();
+                } else if (returncode == AppConstants.SUCCESSLOGIN) {
                     GetUserInfo.setIsGet(true);
                     GetUserInfo.setPeo_name(data.getData().get(0).getName());
                     GetUserInfo.setPeo_id(data.getData().get(0).getStuid());
                     GetUserInfo.setClass_name(data.getData().get(0).getStuclass() + "");
-                    Toast.makeText(act,"登录成功！",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(act, "登录成功！", Toast.LENGTH_SHORT).show();
                     act.finish();
                 }
             }
         }
     }
+
     private static class mErrorListener implements Response.ErrorListener {
         private final WeakReference<Activity> activityWeakReference;
         //private final WeakReference<VolleyCallback> callbackWeakReference;
@@ -162,35 +194,12 @@ public class StudentLoginFragment extends Fragment {
 
         }
     }
+
     mListener mListener = new mListener(getActivity());
 
     mErrorListener mErrorListener = new mErrorListener(getActivity());
 
-    public void setClassName(String str){
+    public void setClassName(String str) {
         tv_classname.setText(str);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        /**
-         * 处理二维码扫描结果
-         */
-        if (requestCode == REQUEST_CODE) {
-            //处理扫描结果（在界面上显示）
-            if (null != data) {
-                Bundle bundle = data.getExtras();
-                if (bundle == null) {
-                    return;
-                }
-                if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
-                    String result = bundle.getString(CodeUtils.RESULT_STRING);
-                    setClassName(result);
-                    Toast.makeText(getActivity(), "解析结果:" + result, Toast.LENGTH_LONG).show();
-                } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
-                    Toast.makeText(getActivity(), "解析二维码失败", Toast.LENGTH_LONG).show();
-                }
-            }
-        }
     }
 }

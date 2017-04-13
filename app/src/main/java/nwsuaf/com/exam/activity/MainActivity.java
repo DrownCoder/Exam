@@ -34,7 +34,6 @@ public class MainActivity extends BaseActivity {
     private RelativeLayout mTeacherLayout;
     private RelativeLayout mStudentLayout;
     private static final int REQUEST_CODE = 0x111;
-    private ImageView mEntry;
 
     private StudentLoginFragment stuFragment;
     @Override
@@ -48,15 +47,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initEvents() {
-        mEntry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, StudentActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
         mViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -112,8 +102,6 @@ public class MainActivity extends BaseActivity {
         list.add(stuFragment);
         list.add(teaFragment);
         mViewpager.setAdapter(new LoginFragmentAdapter(getSupportFragmentManager(), list));
-
-        mEntry = (ImageView) findViewById(R.id.iv_id_quickentry);
     }
 
     @Override
@@ -122,7 +110,7 @@ public class MainActivity extends BaseActivity {
         /**
          * 处理二维码扫描结果
          */
-        if (requestCode == RESULT_FIRST_USER) {
+        if (resultCode == RESULT_OK) {
             //处理扫描结果（在界面上显示）
             if (null != data) {
                 Bundle bundle = data.getExtras();

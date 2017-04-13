@@ -63,14 +63,23 @@
         <activity
             android:name=".activity.LoginActivity"
             android:theme="@style/DialogActivity" />
-        <activity android:name=".activity.TeacherActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activity.CreateClassActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".activity.MyClassActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".activity.MyUIActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activity.TeacherActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.CreateClassActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.MyClassActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.MyUIActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.ClassDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.ExamFinalActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

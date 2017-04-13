@@ -37,8 +37,9 @@ public class RecordAdapter extends RecyclerView.Adapter<RecordAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        examdate item = datas.get(position);
         if(datas != null){
+            examdate item = datas.get(position);
+
             holder.tv_card_date.setText(String.format(context.getResources().
                     getString(R.string.card_date),
                     TimeUtils.formatStringToDate(item.getDate())));
