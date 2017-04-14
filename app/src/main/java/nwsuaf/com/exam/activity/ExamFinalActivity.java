@@ -1,5 +1,8 @@
 package nwsuaf.com.exam.activity;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -7,6 +10,10 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,10 +22,15 @@ import java.util.List;
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.base.BaseActivity;
 import nwsuaf.com.exam.adapter.FragmentAdapter;
+import nwsuaf.com.exam.app.AppConstants;
+import nwsuaf.com.exam.customview.CustomDialog;
 import nwsuaf.com.exam.entity.netmodel.Answer;
 import nwsuaf.com.exam.entity.netmodel.ProblemData;
 import nwsuaf.com.exam.fragment.ExamDetailFragment;
+import nwsuaf.com.exam.util.FileUtils;
+import nwsuaf.com.exam.util.GetUserInfo;
 import nwsuaf.com.exam.util.KeyBoardUtils;
+import nwsuaf.com.exam.util.WebToolUtils;
 
 public class ExamFinalActivity extends BaseActivity {
     private ViewPager mViewPager;
@@ -66,9 +78,35 @@ public class ExamFinalActivity extends BaseActivity {
         setRightClickedListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //确认提交？
+                showConfirmDialog();
             }
         });
+    }
+
+    /**
+     * 确认提交Dialog
+     */
+    private void showConfirmDialog() {
+        CustomDialog.Builder customBuilder = new
+                CustomDialog.Builder(this);
+        customBuilder.setTitle("交卷")
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        //交卷
+                        new SentToServerTask().execute();
+                    }
+                })
+                .setMessage("确认提交试卷？");
+        CustomDialog dialog = customBuilder.create();
+        dialog.show();
     }
 
     private void initData() {
@@ -102,7 +140,7 @@ public class ExamFinalActivity extends BaseActivity {
     }
 
     /**
-     * 创建答案
+     * 创建答案和Fragment
      * @param size
      */
     private void create(int size) {
@@ -124,6 +162,10 @@ public class ExamFinalActivity extends BaseActivity {
         onLoading(true);
     }
 
+    /**
+     * 显示加载UI
+     * @param isLoading
+     */
     public void onLoading(boolean isLoading){
         if(isLoading){
             mLayoutLoading.setVisibility(View.VISIBLE);
@@ -131,6 +173,50 @@ public class ExamFinalActivity extends BaseActivity {
         }else{
             mLayoutLoading.setVisibility(View.GONE);
             dismissProgressDialog();
+        }
+    }
+
+    private class SentToServerTask extends AsyncTask<String, Void, String> {
+        String url;
+        ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog = new ProgressDialog(ExamFinalActivity.this);
+            dialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            String result = null;
+            try {
+                url = params[0];
+                for (Fragment fragment : mFragments) {
+                    mAnswer.add(((ExamDetailFragment)fragment).getAnswer());
+                }
+                List<NameValuePair> datas = new ArrayList<NameValuePair>();
+                datas.add(new BasicNameValuePair("stuid", GetUserInfo.getPeo_id()));
+
+                result = WebToolUtils.HttpSentMessage(datas, url);
+            } catch (Exception e) {
+                e.printStackTrace();
+                //Toast.makeText(ExamActivity.this,"服务器繁忙，请重新提交！", Toast.LENGTH_LONG).show();
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            dialog.dismiss();
+            if (result.equals(String.valueOf(AppConstants.INSERTSUCCESS))) {
+                Toast.makeText(ExamFinalActivity.this, "上传成功！", Toast.LENGTH_LONG).show();
+                FileUtils.delFile("examcache.out");
+                finish();
+            } else {
+                Toast.makeText(ExamFinalActivity.this, "服务器繁忙，请稍后重试！", Toast.LENGTH_LONG).show();
+            }
         }
     }
 }

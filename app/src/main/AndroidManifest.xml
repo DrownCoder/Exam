@@ -78,7 +78,8 @@
         <activity
             android:name=".activity.ClassDetailActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.ExamFinalActivity"
+        <activity
+            android:name=".activity.ExamFinalActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>
 

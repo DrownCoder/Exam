@@ -16,22 +16,17 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.lang.ref.WeakReference;
 
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.ExamFinalActivity;
-import nwsuaf.com.exam.activity.LoginActivity;
-import nwsuaf.com.exam.activity.MainActivity;
 import nwsuaf.com.exam.activity.MyUIActivity;
 import nwsuaf.com.exam.activity.StudentActivity;
-import nwsuaf.com.exam.activity.TeacherActivity;
 import nwsuaf.com.exam.app.AppConstants;
 import nwsuaf.com.exam.customview.CustomDialog;
 import nwsuaf.com.exam.customview.RippleView;
 import nwsuaf.com.exam.entity.netmodel.NetObject_Peo;
-import nwsuaf.com.exam.util.DensityUtils;
 import nwsuaf.com.exam.util.GetUserInfo;
 import nwsuaf.com.exam.util.GsonRequest;
 import nwsuaf.com.exam.util.VolleyUtil;
@@ -44,11 +39,6 @@ public class StudentLoginFragment extends Fragment {
     private ImageView mEntry;
 
     private static final int REQUEST_CODE = 0x111;
-
-    public StudentLoginFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,26 +54,7 @@ public class StudentLoginFragment extends Fragment {
         tv_classname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomDialog.Builder customBuilder = new
-                        CustomDialog.Builder(getActivity());
-                customBuilder.setTitle("请选择")
-                        .setNegativeButton("扫一扫", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                Intent intentReadUi = new Intent(getActivity(), MyUIActivity.class);
-                                startActivityForResult(intentReadUi, REQUEST_CODE);
-                            }
-                        })
-                        .setPositiveButton("手动输入", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                                createInputDialog();
-                            }
-                        })
-                        .setMessage("班级录入方式");
-                CustomDialog dialog = customBuilder.create();
-                dialog.show();
+                showInputTypeDialog();
             }
         });
         rp_id_login.setOnClickListener(new View.OnClickListener() {
@@ -108,6 +79,35 @@ public class StudentLoginFragment extends Fragment {
         });
     }
 
+    /**
+     * 显示输入班级方式dialog
+     */
+    private void showInputTypeDialog() {
+        CustomDialog.Builder customBuilder = new
+                CustomDialog.Builder(getActivity());
+        customBuilder.setTitle("请选择")
+                .setNegativeButton("扫一扫", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Intent intentReadUi = new Intent(getActivity(), MyUIActivity.class);
+                        startActivityForResult(intentReadUi, REQUEST_CODE);
+                    }
+                })
+                .setPositiveButton("手动输入", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        createInputDialog();
+                    }
+                })
+                .setMessage("班级录入方式");
+        CustomDialog dialog = customBuilder.create();
+        dialog.show();
+    }
+
+    /**
+     * 显示手动输入班级dialog
+     */
     private void createInputDialog() {
         final EditText editText = new EditText(getActivity());
         CustomDialog.Builder builder = new CustomDialog.Builder(getActivity());
