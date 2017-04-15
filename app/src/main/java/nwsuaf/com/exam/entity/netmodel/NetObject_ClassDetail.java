@@ -5,9 +5,9 @@ package nwsuaf.com.exam.entity.netmodel;
 import java.util.List;
 
 
-public class NetObject_Peo {
+public class NetObject_ClassDetail {
     private String code;
-    private List<UserInfo> data;
+    private List<StudentState> data;
     private String msg;
 
     public String getMsg() {
@@ -26,11 +26,11 @@ public class NetObject_Peo {
         this.code = code;
     }
 
-    public List<UserInfo> getData() {
+    public List<StudentState> getData() {
         return data;
     }
 
-    public void setData(List<UserInfo> data) {
+    public void setData(List<StudentState> data) {
         this.data = data;
     }
 }

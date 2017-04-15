@@ -40,17 +40,19 @@ public class AppConstants {
     /**
      * 服务器
      */
-    public static final String LOCAL_HOST                  ="http://192.168.139.1:8090";
+    public static final String LOCAL_HOST                  ="http://192.168.88.158:8089";
     public static final String WEBSERVER                   ="/ExamSystemWebPro";
-    public final static int DONTEXIST = 100;
-    public final static int WRONGPASSWORD = 200;
-    public final static int SUCCESSLOGIN = 400;
-    public static final int UPDATESUCCESS = 300;
-    public static final int INSERTSUCCESS = 202;
-    public static final int INSERTERROR = 203;
-    public static final int NOTHINGFOUND = 111;
-    public static final int SUCCESSFOUND = 201;
-    public static final int SELECTERROR = 401;
+    public final static String DONTEXIST = "100";
+    public final static String WRONGPASSWORD = "200";
+    public final static String SUCCESSLOGIN = "400";
+    public static final String UPDATESUCCESS = "300";
+    public static final String INSERTSUCCESS = "202";
+    public static final String INSERTERROR = "203";
+    public static final String NOTHINGFOUND = "111";
+    public static final String SUCCESSFOUND = "201";
+    public static final String SELECTERROR = "401";
+    public static final String SUCCESS_CREATE_CLASS = "204";
+    public static final String SUCCESS_GETCLASSLIST = "205";
 
     /**
      * 图片缓存

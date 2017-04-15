@@ -9,9 +9,6 @@ import android.widget.Toast;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
-
-import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 
@@ -85,7 +82,7 @@ public class LoginActivity extends BaseActivity{
             Activity act = activityWeakReference.get();
             //VolleyCallback vc = callbackWeakReference.get();
             if (act != null) {
-                int returncode = data.getReturncode();
+                String returncode = data.getCode();
                 if(returncode == AppConstants.DONTEXIST){
                     Toast.makeText(act,"用户不存在！",Toast.LENGTH_SHORT).show();
                 }
@@ -94,7 +91,7 @@ public class LoginActivity extends BaseActivity{
                 }
                 else if(returncode == AppConstants.SUCCESSLOGIN){
                     GetUserInfo.setIsGet(true);
-                    GetUserInfo.setPeo_name(data.getData().get(0).getName());
+                    GetUserInfo.setPeo_name(data.getData().get(0).getStuname());
                     GetUserInfo.setPeo_id(data.getData().get(0).getStuid());
                     GetUserInfo.setClass_name(data.getData().get(0).getStuclass() + "");
                     Toast.makeText(act,"登录成功！",Toast.LENGTH_SHORT).show();

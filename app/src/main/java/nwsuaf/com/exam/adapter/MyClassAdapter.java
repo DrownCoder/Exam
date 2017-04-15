@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nwsuaf.com.exam.R;
@@ -32,7 +33,11 @@ public class MyClassAdapter extends RecyclerView.Adapter<MyClassAdapter.ViewHold
 
     public MyClassAdapter(Context context , List<ClassInfo> data) {
         this.mContext = context;
-        this.mData = data;
+        if(data == null){
+            mData = new ArrayList<>();
+        }else{
+            this.mData = data;
+        }
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

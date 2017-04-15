@@ -6,6 +6,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import com.zhy.http.okhttp.OkHttpUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +17,22 @@ import java.util.List;
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.base.BaseActivity;
 import nwsuaf.com.exam.adapter.MyClassAdapter;
+import nwsuaf.com.exam.app.AppConstants;
+import nwsuaf.com.exam.callback.ClassListCallback;
+import nwsuaf.com.exam.callback.LoginCallback;
 import nwsuaf.com.exam.entity.netmodel.ClassInfo;
+import nwsuaf.com.exam.entity.netmodel.NetObject_ClassList;
+import nwsuaf.com.exam.entity.netmodel.NetObject_Peo;
+import nwsuaf.com.exam.entity.netmodel.UserInfo;
+import nwsuaf.com.exam.util.GetUserInfo;
 
 public class MyClassActivity extends BaseActivity {
     private SwipeRefreshLayout mSwipe;
     private RecyclerView mRecyclerView;
     private MyClassAdapter mAdapter;
     private List<ClassInfo> mData;
-
+    //遮罩层
+    private RelativeLayout mLayoutLoading;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,9 +40,58 @@ public class MyClassActivity extends BaseActivity {
         TopView();
         setTitle("我的班级");
         initViews();
+        initDatas();
         initEvents();
     }
 
+    private void initDatas() {
+        mData = new ArrayList<>();
+        mAdapter = new MyClassAdapter(MyClassActivity.this, mData);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(MyClassActivity.this));
+        mRecyclerView.setAdapter(mAdapter);
+        getClassListInfo();
+    }
+
+    private void getClassListInfo() {
+        String url = new StringBuffer(AppConstants.LOCAL_HOST)
+                .append("/getClassList").toString();
+                /*.append("&stuid=")
+                .append(URLDecoder.decode(tv_id_uid.getText().toString()))
+                .append("&passwd=")
+                .append(URLDecoder.decode(tv_id_passwd.getText().toString())).toString();*/
+        OkHttpUtils
+                .get()
+                .url(url)
+                .addParams("teacherid", GetUserInfo.getPeo_id())
+                .build()
+                .execute(new ClassListCallback(){
+                    @Override
+                    public void onResponse(NetObject_ClassList response, int id) {
+                        NetObject_ClassList res = (NetObject_ClassList) response;
+                        if (res.getCode().equals(AppConstants.SUCCESS_GETCLASSLIST)) {
+                            mData.clear();
+                            mData.addAll(res.getData());
+                            mAdapter.notifyDataSetChanged();
+                            onLoading(false);
+                        }else{
+                            Toast.makeText(MyClassActivity.this,res.getMsg(),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+    /**
+     * 显示加载UI
+     * @param isLoading
+     */
+    public void onLoading(boolean isLoading){
+        if(isLoading){
+            mLayoutLoading.setVisibility(View.VISIBLE);
+            showProgressDialog(MyClassActivity.this);
+        }else{
+            mLayoutLoading.setVisibility(View.GONE);
+            dismissProgressDialog();
+        }
+    }
     private void initEvents() {
         setLeftBack();
         setRightClickedListener(new View.OnClickListener() {
@@ -43,7 +104,7 @@ public class MyClassActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 //下拉刷新
-                mAdapter.notifyDataSetChanged();
+                getClassListInfo();
                 mSwipe.setRefreshing(false);
             }
         });
@@ -64,10 +125,12 @@ public class MyClassActivity extends BaseActivity {
         setRightIcon(R.drawable.refresh);
         mSwipe = (SwipeRefreshLayout) findViewById(R.id.sw_refresh);
         mRecyclerView = (RecyclerView) findViewById(R.id.rcy_myclass);
-
-/**
+        mLayoutLoading = (RelativeLayout) findViewById(R.id.rl_loading);
+        onLoading(true);
+/*
+*//**
  * --------------------------假数据-------------------------------------------------
- */
+ *//*
         ClassInfo item1 = new ClassInfo();
         item1.setClassname("软件131班");
         item1.setOnline(30);
@@ -87,11 +150,8 @@ public class MyClassActivity extends BaseActivity {
         mData.add(item1);
         mData.add(item2);
         mData.add(item3);
-        /**
+        *//**
          * --------------------------假数据-------------------------------------------------
          */
-        mAdapter = new MyClassAdapter(MyClassActivity.this, mData);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(MyClassActivity.this));
-        mRecyclerView.setAdapter(mAdapter);
     }
 }

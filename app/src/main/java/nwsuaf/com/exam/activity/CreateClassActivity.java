@@ -1,8 +1,6 @@
 package nwsuaf.com.exam.activity;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,9 +9,14 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.uuzuche.lib_zxing.activity.CodeUtils;
+import com.zhy.http.okhttp.OkHttpUtils;
 
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.base.BaseActivity;
+import nwsuaf.com.exam.app.AppConstants;
+import nwsuaf.com.exam.callback.LoginCallback;
+import nwsuaf.com.exam.entity.netmodel.NetObject_Peo;
+import nwsuaf.com.exam.util.GetUserInfo;
 import nwsuaf.com.exam.util.KeyBoardUtils;
 
 public class CreateClassActivity extends BaseActivity {
@@ -43,11 +46,38 @@ public class CreateClassActivity extends BaseActivity {
                     return;
                 }
                 mCreateClassName.setText("");
-                mBitmap = CodeUtils.createImage(key, 400, 400, null);
-                mClassPic.setImageBitmap(mBitmap);
-                KeyBoardUtils.closeKeybord(mCreateClassName,CreateClassActivity.this);
+                createClass(key);
             }
         });
+    }
+
+    private void createClass(final String key) {
+        String url = new StringBuffer(AppConstants.LOCAL_HOST)
+                .append("/login").toString();
+                /*.append("&stuid=")
+                .append(URLDecoder.decode(tv_id_uid.getText().toString()))
+                .append("&passwd=")
+                .append(URLDecoder.decode(tv_id_passwd.getText().toString())).toString();*/
+        OkHttpUtils
+                .get()
+                .url(url)
+                .addParams("teacherid", GetUserInfo.getPeo_id())
+                .addParams("classname", key)
+                .build()
+                .execute(new LoginCallback(){
+                    @Override
+                    public void onResponse(NetObject_Peo response, int id) {
+                        NetObject_Peo res = (NetObject_Peo) response;
+                        if (res.getCode().equals(AppConstants.SUCCESS_CREATE_CLASS)) {
+                            Toast.makeText(CreateClassActivity.this, "创建成功！", Toast.LENGTH_SHORT).show();
+                            mBitmap = CodeUtils.createImage(key, 400, 400, null);
+                            mClassPic.setImageBitmap(mBitmap);
+                            KeyBoardUtils.closeKeybord(mCreateClassName,CreateClassActivity.this);
+                        }else{
+                            Toast.makeText(CreateClassActivity.this,res.getMsg(),Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     private void initViews() {
