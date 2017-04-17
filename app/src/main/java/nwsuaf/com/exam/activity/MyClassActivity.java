@@ -19,11 +19,8 @@ import nwsuaf.com.exam.activity.base.BaseActivity;
 import nwsuaf.com.exam.adapter.MyClassAdapter;
 import nwsuaf.com.exam.app.AppConstants;
 import nwsuaf.com.exam.callback.ClassListCallback;
-import nwsuaf.com.exam.callback.LoginCallback;
 import nwsuaf.com.exam.entity.netmodel.ClassInfo;
 import nwsuaf.com.exam.entity.netmodel.NetObject_ClassList;
-import nwsuaf.com.exam.entity.netmodel.NetObject_Peo;
-import nwsuaf.com.exam.entity.netmodel.UserInfo;
 import nwsuaf.com.exam.util.GetUserInfo;
 
 public class MyClassActivity extends BaseActivity {
@@ -87,7 +84,7 @@ public class MyClassActivity extends BaseActivity {
     public void onLoading(boolean isLoading){
         if(isLoading){
             mLayoutLoading.setVisibility(View.VISIBLE);
-            showProgressDialog(MyClassActivity.this);
+            showProgressDialog(MyClassActivity.this,"数据加载中……");
         }else{
             mLayoutLoading.setVisibility(View.GONE);
             dismissProgressDialog();

@@ -1,5 +1,6 @@
 package nwsuaf.com.exam.entity.netmodel;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  * 新数据类型，不要问为什么，因为改需求
  */
 
-public class ProblemData {
+public class ProblemData implements Serializable{
     private String id;
     private List<String> imgList;
 

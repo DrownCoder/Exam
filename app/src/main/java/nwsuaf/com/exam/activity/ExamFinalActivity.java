@@ -8,6 +8,7 @@ import android.os.CountDownTimer;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ import nwsuaf.com.exam.entity.netmodel.ProblemData;
 import nwsuaf.com.exam.fragment.ExamDetailFragment;
 import nwsuaf.com.exam.util.FileUtils;
 import nwsuaf.com.exam.util.GetUserInfo;
+import nwsuaf.com.exam.util.InputUtil;
 import nwsuaf.com.exam.util.KeyBoardUtils;
 import nwsuaf.com.exam.util.OutputUtil;
 import nwsuaf.com.exam.util.TimeUtils;
@@ -53,16 +55,9 @@ public class ExamFinalActivity extends BaseActivity {
 
     private List<Answer> mAnswer;
     private List<Fragment> mFragments;
-    private String[] mImgSource = new String[]{
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091912314&di=043ca0ff0cdf5bfce360f287be22a538&imgtype=jpg&src=http%3A%2F%2Fimg0.imgtn.bdimg.com%2Fit%2Fu%3D3686266434%2C1600710035%26fm%3D214%26gp%3D0.jpg",
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=666ba858a654baa53d060f063ad65b9f&imgtype=0&src=http%3A%2F%2Fwww.benbenla.cn%2Fimages%2F20130107%2Fbenbenla-09c.jpg",
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=7cccb906d6fa0d26776896c1c7d1f7eb&imgtype=0&src=http%3A%2F%2Fwww.benbenla.cn%2Fimages%2F20110910%2Fbenbenla-06c.jpg",
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=04960dad8aa3b028c531a51ba3f47afc&imgtype=0&src=http%3A%2F%2Fimg.wallpaperlist.com%2Fuploads%2Fwallpaper%2Ffiles%2Fora%2Forange-lake-shore-in-sunset-wallpaper-1366x768-5346ca4997dfa.jpg",
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091912314&di=043ca0ff0cdf5bfce360f287be22a538&imgtype=jpg&src=http%3A%2F%2Fimg0.imgtn.bdimg.com%2Fit%2Fu%3D3686266434%2C1600710035%26fm%3D214%26gp%3D0.jpg",
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=666ba858a654baa53d060f063ad65b9f&imgtype=0&src=http%3A%2F%2Fwww.benbenla.cn%2Fimages%2F20130107%2Fbenbenla-09c.jpg",
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=7cccb906d6fa0d26776896c1c7d1f7eb&imgtype=0&src=http%3A%2F%2Fwww.benbenla.cn%2Fimages%2F20110910%2Fbenbenla-06c.jpg",
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=04960dad8aa3b028c531a51ba3f47afc&imgtype=0&src=http%3A%2F%2Fimg.wallpaperlist.com%2Fuploads%2Fwallpaper%2Ffiles%2Fora%2Forange-lake-shore-in-sunset-wallpaper-1366x768-5346ca4997dfa.jpg"
-    };
+
+    private NetObject_ProblemData localdata;
+    private CountDownTimer mTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,34 +134,58 @@ public class ExamFinalActivity extends BaseActivity {
      * 联网获取题目
      */
     private void getProblemDate() {
-        String url = new StringBuffer(AppConstants.LOCAL_HOST)
-                .append("/getProblemData").toString();
-        OkHttpUtils
-                .get()
-                .url(url)
-                .addParams("classname", GetUserInfo.getClass_name())
-                .build()
-                .execute(new ProblemCallback() {
-                    @Override
-                    public void onResponse(NetObject_ProblemData response, int id) {
-                        NetObject_ProblemData res = response;
-                        if (res.getCode().equals(AppConstants.SUCCESS_GETPROBLEM)) {
-                            mData.clear();
-                            mData.addAll(res.getData());
-                            create(mData.size());
-                            setTitle(TimeUtils.formatTime(res.getTime()));
-                            mAdapter.notifyDataSetChanged();
-                            onLoading(false);
-                            startCountDownTimer(res.getTime());
+        if(CheckNetData()){
+            mData.clear();
+            mData.addAll(localdata.getData());
+            create(mData.size());
+            setTitle(TimeUtils.formatTime(localdata.getTime()));
+            onLoading(false);
+            startCountDownTimer(localdata.getTime());
+        }else{
+            String url = new StringBuffer(AppConstants.LOCAL_HOST)
+                    .append("/getProblemData").toString();
+            OkHttpUtils
+                    .get()
+                    .url(url)
+                    .addParams("classname", GetUserInfo.getClass_name())
+                    .build()
+                    .execute(new ProblemCallback() {
+                        @Override
+                        public void onResponse(NetObject_ProblemData response, int id) {
+                            NetObject_ProblemData res = response;
+                            if (res.getCode().equals(AppConstants.SUCCESS_GETPROBLEM)) {
+                                mData.clear();
+                                mData.addAll(res.getData());
+                                create(mData.size());
+                                setTitle(TimeUtils.formatTime(res.getTime()));
+                                mAdapter.notifyDataSetChanged();
+                                onLoading(false);
+                                startCountDownTimer(res.getTime());
 
-                            //备份数据到本地
-                            new OutputUtil<NetObject_ProblemData>()
-                                    .writObjectIntoSDcard(AppConstants.LOCAL_DATA_BAK, res);
-                        } else {
-                            Toast.makeText(ExamFinalActivity.this, res.getMsg(), Toast.LENGTH_SHORT).show();
+                                //备份数据到本地
+                                new OutputUtil<NetObject_ProblemData>()
+                                        .writObjectIntoSDcard(AppConstants.LOCAL_DATA_BAK, res);
+                            } else {
+                                Toast.makeText(ExamFinalActivity.this, res.getMsg(), Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+        }
+    }
+
+    /**
+     * 检查本地是否存在联网获得的数据
+     * ----程序异常结束二次进入->存在
+     *
+     * @return
+     */
+    private boolean CheckNetData() {
+        localdata = new InputUtil<NetObject_ProblemData>().readObjectFromSdCard(AppConstants.LOCAL_DATA_BAK);
+        if (localdata == null) {
+            Log.e("checknetdata", "false");
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -175,7 +194,7 @@ public class ExamFinalActivity extends BaseActivity {
      * @param time
      */
     private void startCountDownTimer(long time) {
-        CountDownTimer timer = new CountDownTimer(time, 1000) {
+        mTimer = new CountDownTimer(time, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 setTitle(TimeUtils.formatTime(millisUntilFinished));
@@ -186,7 +205,7 @@ public class ExamFinalActivity extends BaseActivity {
                 showConfirmDialog();
             }
         };
-        timer.start();
+        mTimer.start();
     }
 
     /**
@@ -220,7 +239,7 @@ public class ExamFinalActivity extends BaseActivity {
     public void onLoading(boolean isLoading) {
         if (isLoading) {
             mLayoutLoading.setVisibility(View.VISIBLE);
-            showProgressDialog(ExamFinalActivity.this);
+            showProgressDialog(ExamFinalActivity.this,"数据加载中……");
         } else {
             mLayoutLoading.setVisibility(View.GONE);
             dismissProgressDialog();
@@ -228,14 +247,11 @@ public class ExamFinalActivity extends BaseActivity {
     }
 
     private class SentToServerTask extends AsyncTask<String, Void, String> {
-        String url;
-        ProgressDialog dialog;
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            dialog = new ProgressDialog(ExamFinalActivity.this);
-            dialog.show();
+            mTimer.cancel();
+            showProgressDialog(ExamFinalActivity.this,"提交中……");
         }
 
         @Override
@@ -243,11 +259,11 @@ public class ExamFinalActivity extends BaseActivity {
             String result = null;
             try {
                 if (saveAnswerToLocal()) {
-                    result = "缓存成功";
+                    result = "答案保存成功";
+                    sentAnswerToNet();
                 } else {
-                    result = "缓存失败";
+                    result = "答案保存失败";
                 }
-                sentAnswerToNet();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -257,8 +273,7 @@ public class ExamFinalActivity extends BaseActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            dialog.dismiss();
-            if (result.equals("缓存成功")) {
+            if (result.equals("答案保存成功")) {
                 Toast.makeText(ExamFinalActivity.this, result, Toast.LENGTH_LONG).show();
 /*                FileUtils.delFile("examcache.out");
                 finish();*/
@@ -291,6 +306,7 @@ public class ExamFinalActivity extends BaseActivity {
                         public void onResponse(String response, int id) {
                             Toast.makeText(ExamFinalActivity.this, response, Toast.LENGTH_SHORT).show();
                             FileUtils.delFile("examcache.out");
+                            dismissProgressDialog();
                             finish();
                         }
                     });

@@ -2,10 +2,11 @@ package nwsuaf.com.exam.entity.netmodel;
 
 
 
+import java.io.Serializable;
 import java.util.List;
 
 
-public class NetObject_ProblemData {
+public class NetObject_ProblemData implements Serializable {
     private String code;
     private long time;
     private List<ProblemData> data;

@@ -1,10 +1,12 @@
 package nwsuaf.com.exam.entity.netmodel;
 
+import java.io.Serializable;
+
 /**
  * Created by dengzhaoxuan on 2017/4/13.
  */
 
-public class Answer {
+public class Answer implements Serializable{
     private String id;
     private String ke;
     private String shu;

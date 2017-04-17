@@ -51,7 +51,7 @@ public class ClassDetailActivity extends BaseActivity {
     public void onLoading(boolean isLoading){
         if(isLoading){
             mLayoutLoading.setVisibility(View.VISIBLE);
-            showProgressDialog(ClassDetailActivity.this);
+            showProgressDialog(ClassDetailActivity.this,"数据加载中……");
         }else{
             mLayoutLoading.setVisibility(View.GONE);
             dismissProgressDialog();

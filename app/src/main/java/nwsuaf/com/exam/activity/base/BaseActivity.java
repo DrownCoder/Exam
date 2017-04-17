@@ -2,6 +2,7 @@ package nwsuaf.com.exam.activity.base;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.zhy.autolayout.AutoLayoutActivity;
@@ -25,10 +27,11 @@ import com.zhy.autolayout.AutoLayoutActivity;
 import java.util.List;
 
 import nwsuaf.com.exam.R;
+import nwsuaf.com.exam.customview.CustomDialog;
 
 
 public class BaseActivity extends AutoLayoutActivity {
-    private ProgressDialog dialog;
+    private CustomDialog dialog;
 
     public void TopView() {
         //透明状态栏
@@ -78,8 +81,12 @@ public class BaseActivity extends AutoLayoutActivity {
         ((TextView) findViewById(R.id.tv_id_righttext)).setText(str);
     }
 
-    public void showProgressDialog(Context context) {
-        dialog = new ProgressDialog(context);
+    public void showProgressDialog(Context context,String str) {
+        ProgressBar bar = new ProgressBar(context);
+        CustomDialog.Builder builder = new CustomDialog.Builder(context);
+        builder.setTitle(str)
+                .setContentView(bar);
+        dialog = builder.create();
         dialog.show();
     }
 
