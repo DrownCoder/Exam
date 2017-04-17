@@ -86,6 +86,7 @@ public class ClassDetailActivity extends BaseActivity {
                             mData.addAll(res.getData());
                             mAdapter.notifyDataSetChanged();
                             onLoading(false);
+                            mSwipe.setRefreshing(false);
                         }else{
                             Toast.makeText(ClassDetailActivity.this,res.getMsg(),Toast.LENGTH_SHORT).show();
                         }
@@ -100,7 +101,13 @@ public class ClassDetailActivity extends BaseActivity {
             public void onRefresh() {
                 //下拉刷新
                 getClassDetail();
-                mSwipe.setRefreshing(false);
+            }
+        });
+        setRightClickedListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSwipe.setRefreshing(true);
+                getClassDetail();
             }
         });
     }

@@ -17,7 +17,9 @@ import java.util.Random;
 import cn.iwgang.countdownview.CountdownView;
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.ExamActivity;
+import nwsuaf.com.exam.activity.ExamFinalActivity;
 import nwsuaf.com.exam.activity.LoginActivity;
+import nwsuaf.com.exam.activity.MainActivity;
 import nwsuaf.com.exam.app.AppConstants;
 import nwsuaf.com.exam.customview.CustomDialog;
 import nwsuaf.com.exam.customview.SubmitButton;
@@ -84,8 +86,9 @@ public class ExamFragment extends Fragment implements View.OnClickListener {
                     customBuilder.showUserInfo(GetUserInfo.getPeo_name(), GetUserInfo.getPeo_id(),
                             GetUserInfo.getClass_name());
                 } else {//登录
-                    Intent intentLogin = new Intent(getActivity(), LoginActivity.class);
+                    Intent intentLogin = new Intent(getActivity(), MainActivity.class);
                     startActivity(intentLogin);
+                    getActivity().finish();
                 }
                 break;
         }
@@ -113,8 +116,9 @@ public class ExamFragment extends Fragment implements View.OnClickListener {
             public void onEnd(CountdownView cv) {
                 //倒计时结束 获得数据
                 dialog.dismiss();
-                Intent intent = new Intent(getActivity(), ExamActivity.class);
-                intent.putExtra("type", AppConstants.TYPE_EXAM);
+                /*Intent intent = new Intent(getActivity(), ExamActivity.class);
+                intent.putExtra("type", AppConstants.TYPE_EXAM);*/
+                Intent intent = new Intent(getActivity(), ExamFinalActivity.class);
                 startActivity(intent);
             }
         });

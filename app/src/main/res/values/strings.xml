@@ -8,7 +8,7 @@
     <string name="tv_randomexe">随机练习</string>
     <string name="tv_mineexam">模拟自测</string>
     <string name="tv_examnote">考前须知</string>
-    <string name="tv_login">考生登录</string>
+    <string name="tv_login">考生信息</string>
     <string name="tv_single">单项选择</string>
     <string name="tv_multiple">多项选择</string>
     <string name="tv_judge">判断题</string>

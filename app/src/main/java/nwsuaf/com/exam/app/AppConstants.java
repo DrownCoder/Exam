@@ -3,7 +3,7 @@ package nwsuaf.com.exam.app;
 import android.os.Environment;
 
 /**
- * Created by Administrator on 2017/1/22.
+ * Created by Xuan on 2017/1/22.
  */
 public class AppConstants {
     public static final int PROBLEM_TYPE_SINGLE             = 1;                //单选题
@@ -18,6 +18,8 @@ public class AppConstants {
 
     public static final String LOCAL_DB_NAME                ="exam.db";         //数据库名
     public static final String LOCAL_ASSETS_NAME            ="exam.db";         //ASSETS文件名
+    public static final String LOCAL_DATA_BAK               ="exambak.out";     //本地备份试题名
+    public static final String LOCAL_ANSWER_BAK               ="answerbak.out";     //本地备份答案名
 
     //数据库保存路径
     public static final String DB_PATH                      ="/data/data/nwsuaf.com.exam/databases/exam.db";
@@ -53,6 +55,7 @@ public class AppConstants {
     public static final String SELECTERROR = "401";
     public static final String SUCCESS_CREATE_CLASS = "204";
     public static final String SUCCESS_GETCLASSLIST = "205";
+    public static final String SUCCESS_GETPROBLEM = "206";
 
     /**
      * 图片缓存

@@ -71,7 +71,7 @@ public class BaseActivity extends AutoLayoutActivity {
     }
 
     public void setRightClickedListener(View.OnClickListener onClickListener) {
-        ((ImageView) findViewById(R.id.iv_id_rightbtn)).setOnClickListener(onClickListener);
+        ((TextView) findViewById(R.id.tv_id_righttext)).setOnClickListener(onClickListener);
     }
 
     public void setRightText(String str) {

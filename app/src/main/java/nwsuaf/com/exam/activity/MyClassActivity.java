@@ -73,6 +73,7 @@ public class MyClassActivity extends BaseActivity {
                             mData.addAll(res.getData());
                             mAdapter.notifyDataSetChanged();
                             onLoading(false);
+                            mSwipe.setRefreshing(false);
                         }else{
                             Toast.makeText(MyClassActivity.this,res.getMsg(),Toast.LENGTH_SHORT).show();
                         }
@@ -105,7 +106,6 @@ public class MyClassActivity extends BaseActivity {
             public void onRefresh() {
                 //下拉刷新
                 getClassListInfo();
-                mSwipe.setRefreshing(false);
             }
         });
 
@@ -117,6 +117,14 @@ public class MyClassActivity extends BaseActivity {
                 bundle.putSerializable("classinfo",mData.get(position));
                 intent.putExtras(bundle);
                 startActivity(intent);
+            }
+        });
+
+        setRightClickedListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSwipe.setRefreshing(true);
+                getClassListInfo();
             }
         });
     }

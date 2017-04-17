@@ -4,7 +4,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.os.CountDownTimer;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -12,32 +13,41 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.StringCallback;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.base.BaseActivity;
 import nwsuaf.com.exam.adapter.FragmentAdapter;
 import nwsuaf.com.exam.app.AppConstants;
+import nwsuaf.com.exam.callback.ProblemCallback;
 import nwsuaf.com.exam.customview.CustomDialog;
 import nwsuaf.com.exam.entity.netmodel.Answer;
+import nwsuaf.com.exam.entity.netmodel.NetObject_Answer;
+import nwsuaf.com.exam.entity.netmodel.NetObject_Problem;
+import nwsuaf.com.exam.entity.netmodel.NetObject_ProblemData;
 import nwsuaf.com.exam.entity.netmodel.ProblemData;
 import nwsuaf.com.exam.fragment.ExamDetailFragment;
 import nwsuaf.com.exam.util.FileUtils;
 import nwsuaf.com.exam.util.GetUserInfo;
 import nwsuaf.com.exam.util.KeyBoardUtils;
+import nwsuaf.com.exam.util.OutputUtil;
+import nwsuaf.com.exam.util.TimeUtils;
 import nwsuaf.com.exam.util.WebToolUtils;
+import okhttp3.Call;
 
 public class ExamFinalActivity extends BaseActivity {
     private ViewPager mViewPager;
     //private ExamAdapter mAdapter;
     private FragmentAdapter mAdapter;
     private List<ProblemData> mData;
-    private TextView mTvTime;
     //遮罩层
     private RelativeLayout mLayoutLoading;
 
@@ -47,8 +57,13 @@ public class ExamFinalActivity extends BaseActivity {
             "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091912314&di=043ca0ff0cdf5bfce360f287be22a538&imgtype=jpg&src=http%3A%2F%2Fimg0.imgtn.bdimg.com%2Fit%2Fu%3D3686266434%2C1600710035%26fm%3D214%26gp%3D0.jpg",
             "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=666ba858a654baa53d060f063ad65b9f&imgtype=0&src=http%3A%2F%2Fwww.benbenla.cn%2Fimages%2F20130107%2Fbenbenla-09c.jpg",
             "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=7cccb906d6fa0d26776896c1c7d1f7eb&imgtype=0&src=http%3A%2F%2Fwww.benbenla.cn%2Fimages%2F20110910%2Fbenbenla-06c.jpg",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=04960dad8aa3b028c531a51ba3f47afc&imgtype=0&src=http%3A%2F%2Fimg.wallpaperlist.com%2Fuploads%2Fwallpaper%2Ffiles%2Fora%2Forange-lake-shore-in-sunset-wallpaper-1366x768-5346ca4997dfa.jpg",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091912314&di=043ca0ff0cdf5bfce360f287be22a538&imgtype=jpg&src=http%3A%2F%2Fimg0.imgtn.bdimg.com%2Fit%2Fu%3D3686266434%2C1600710035%26fm%3D214%26gp%3D0.jpg",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=666ba858a654baa53d060f063ad65b9f&imgtype=0&src=http%3A%2F%2Fwww.benbenla.cn%2Fimages%2F20130107%2Fbenbenla-09c.jpg",
+            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=7cccb906d6fa0d26776896c1c7d1f7eb&imgtype=0&src=http%3A%2F%2Fwww.benbenla.cn%2Fimages%2F20110910%2Fbenbenla-06c.jpg",
             "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1490091910387&di=04960dad8aa3b028c531a51ba3f47afc&imgtype=0&src=http%3A%2F%2Fimg.wallpaperlist.com%2Fuploads%2Fwallpaper%2Ffiles%2Fora%2Forange-lake-shore-in-sunset-wallpaper-1366x768-5346ca4997dfa.jpg"
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +104,7 @@ public class ExamFinalActivity extends BaseActivity {
      */
     private void showConfirmDialog() {
         CustomDialog.Builder customBuilder = new
-                CustomDialog.Builder(this);
+                CustomDialog.Builder(ExamFinalActivity.this);
         customBuilder.setTitle("交卷")
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -110,45 +125,81 @@ public class ExamFinalActivity extends BaseActivity {
     }
 
     private void initData() {
-        setTitle("00:30:00");
         setRightText("提交");
         mData = new ArrayList<>();
         mAnswer = new ArrayList<>();
         mFragments = new ArrayList<>();
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                for(int i = 0;i<20;i++){
-                    ProblemData item1 = new ProblemData();
-                    item1.setImgList(Arrays.asList(mImgSource));
-                    mData.add(item1);
-                }
-                create(mData.size());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAdapter.notifyDataSetChanged();
-                        onLoading(false);
-                    }
-                });
-            }
-        }, 2000);
+        getProblemDate();
         //mAdapter = new ExamAdapter(ExamFinalActivity.this , mData ,mAnswer);
         mAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         mViewPager.setAdapter(mAdapter);
     }
 
     /**
+     * 联网获取题目
+     */
+    private void getProblemDate() {
+        String url = new StringBuffer(AppConstants.LOCAL_HOST)
+                .append("/getProblemData").toString();
+        OkHttpUtils
+                .get()
+                .url(url)
+                .addParams("classname", GetUserInfo.getClass_name())
+                .build()
+                .execute(new ProblemCallback() {
+                    @Override
+                    public void onResponse(NetObject_ProblemData response, int id) {
+                        NetObject_ProblemData res = response;
+                        if (res.getCode().equals(AppConstants.SUCCESS_GETPROBLEM)) {
+                            mData.clear();
+                            mData.addAll(res.getData());
+                            create(mData.size());
+                            setTitle(TimeUtils.formatTime(res.getTime()));
+                            mAdapter.notifyDataSetChanged();
+                            onLoading(false);
+                            startCountDownTimer(res.getTime());
+
+                            //备份数据到本地
+                            new OutputUtil<NetObject_ProblemData>()
+                                    .writObjectIntoSDcard(AppConstants.LOCAL_DATA_BAK, res);
+                        } else {
+                            Toast.makeText(ExamFinalActivity.this, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 开始倒计时
+     *
+     * @param time
+     */
+    private void startCountDownTimer(long time) {
+        CountDownTimer timer = new CountDownTimer(time, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                setTitle(TimeUtils.formatTime(millisUntilFinished));
+            }
+
+            @Override
+            public void onFinish() {
+                showConfirmDialog();
+            }
+        };
+        timer.start();
+    }
+
+    /**
      * 创建答案和Fragment
+     *
      * @param size
      */
     private void create(int size) {
-        for(int i = 0;i<size;i++) {
+        for (int i = 0; i < size; i++) {
             Answer item = new Answer();
             mAnswer.add(item);
         }
-        for(int i = 0;i<size;i++) {
+        for (int i = 0; i < size; i++) {
             ExamDetailFragment fragment = new ExamDetailFragment();
             fragment.setData(mData.get(i));
             mFragments.add(fragment);
@@ -157,20 +208,20 @@ public class ExamFinalActivity extends BaseActivity {
 
     private void initView() {
         mViewPager = (ViewPager) findViewById(R.id.vp_final_problem);
-        mTvTime = (TextView) findViewById(R.id.tv_final_time);
         mLayoutLoading = (RelativeLayout) findViewById(R.id.rl_loading);
         onLoading(true);
     }
 
     /**
      * 显示加载UI
+     *
      * @param isLoading
      */
-    public void onLoading(boolean isLoading){
-        if(isLoading){
+    public void onLoading(boolean isLoading) {
+        if (isLoading) {
             mLayoutLoading.setVisibility(View.VISIBLE);
             showProgressDialog(ExamFinalActivity.this);
-        }else{
+        } else {
             mLayoutLoading.setVisibility(View.GONE);
             dismissProgressDialog();
         }
@@ -191,17 +242,14 @@ public class ExamFinalActivity extends BaseActivity {
         protected String doInBackground(String... params) {
             String result = null;
             try {
-                url = params[0];
-                for (Fragment fragment : mFragments) {
-                    mAnswer.add(((ExamDetailFragment)fragment).getAnswer());
+                if (saveAnswerToLocal()) {
+                    result = "缓存成功";
+                } else {
+                    result = "缓存失败";
                 }
-                List<NameValuePair> datas = new ArrayList<NameValuePair>();
-                datas.add(new BasicNameValuePair("stuid", GetUserInfo.getPeo_id()));
-
-                result = WebToolUtils.HttpSentMessage(datas, url);
+                sentAnswerToNet();
             } catch (Exception e) {
                 e.printStackTrace();
-                //Toast.makeText(ExamActivity.this,"服务器繁忙，请重新提交！", Toast.LENGTH_LONG).show();
             }
             return result;
         }
@@ -210,13 +258,59 @@ public class ExamFinalActivity extends BaseActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             dialog.dismiss();
-            if (result.equals(String.valueOf(AppConstants.INSERTSUCCESS))) {
-                Toast.makeText(ExamFinalActivity.this, "上传成功！", Toast.LENGTH_LONG).show();
-                FileUtils.delFile("examcache.out");
-                finish();
+            if (result.equals("缓存成功")) {
+                Toast.makeText(ExamFinalActivity.this, result, Toast.LENGTH_LONG).show();
+/*                FileUtils.delFile("examcache.out");
+                finish();*/
             } else {
-                Toast.makeText(ExamFinalActivity.this, "服务器繁忙，请稍后重试！", Toast.LENGTH_LONG).show();
+                Toast.makeText(ExamFinalActivity.this, result, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    /**
+     * 提交答案到服务器
+     */
+    private void sentAnswerToNet() {
+        String url = new StringBuffer(AppConstants.LOCAL_HOST)
+                .append("/sentAnswerToNet").toString();
+        File sdCardDir = Environment.getExternalStorageDirectory();//获取sd卡目录
+        File sdFile = new File(sdCardDir, AppConstants.LOCAL_ANSWER_BAK);
+        if (FileUtils.isFileExist(AppConstants.LOCAL_ANSWER_BAK)) {
+            OkHttpUtils
+                    .postFile()
+                    .url(url)
+                    .file(sdFile)
+                    .build()
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(Call call, Exception e, int id) {
+
+                        }
+                        @Override
+                        public void onResponse(String response, int id) {
+                            Toast.makeText(ExamFinalActivity.this, response, Toast.LENGTH_SHORT).show();
+                            FileUtils.delFile("examcache.out");
+                            finish();
+                        }
+                    });
+        } else {
+            Toast.makeText(ExamFinalActivity.this, "答案为空，提交失败！", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * 备份答案到本地
+     */
+    private boolean saveAnswerToLocal() {
+        for (Fragment fragment : mFragments) {
+            mAnswer.add(((ExamDetailFragment) fragment).getAnswer());
+        }
+        NetObject_Answer netAnswer = new NetObject_Answer();
+        netAnswer.setId(GetUserInfo.getPeo_id());
+        netAnswer.setData(mAnswer);
+        //备份答案到本地
+        return new OutputUtil<NetObject_Answer>()
+                .writObjectIntoSDcard(AppConstants.LOCAL_ANSWER_BAK, netAnswer);
     }
 }
