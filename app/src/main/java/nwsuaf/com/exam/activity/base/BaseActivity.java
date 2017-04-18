@@ -21,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zhy.autolayout.AutoLayoutActivity;
 
@@ -69,6 +70,10 @@ public class BaseActivity extends AutoLayoutActivity {
         ((TextView) findViewById(R.id.tv_id_centertext)).setText(title);
     }
 
+    public String getCustomTitle(){
+        return ((TextView)findViewById(R.id.tv_id_centertext)).getText().toString();
+    }
+
     public void setRightIcon(int imgId) {
         ((ImageView) findViewById(R.id.iv_id_rightbtn)).setImageResource(imgId);
     }
@@ -95,6 +100,10 @@ public class BaseActivity extends AutoLayoutActivity {
             dialog.dismiss();
             dialog = null;
         }
+    }
+
+    public void ToastMsg(Context context,String msg){
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
 }
 

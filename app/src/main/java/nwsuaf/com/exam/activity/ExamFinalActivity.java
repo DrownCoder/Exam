@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 import java.io.File;
@@ -25,6 +27,7 @@ import nwsuaf.com.exam.adapter.FragmentAdapter;
 import nwsuaf.com.exam.app.AppConstants;
 import nwsuaf.com.exam.callback.ProblemCallback;
 import nwsuaf.com.exam.customview.CustomDialog;
+import nwsuaf.com.exam.entity.netmodel.CustomResponse;
 import nwsuaf.com.exam.entity.netmodel.FAnswer;
 import nwsuaf.com.exam.entity.netmodel.NetObject_Answer;
 import nwsuaf.com.exam.entity.netmodel.NetObject_ProblemData;
@@ -36,6 +39,7 @@ import nwsuaf.com.exam.util.GetUserInfo;
 import nwsuaf.com.exam.util.InputUtil;
 import nwsuaf.com.exam.util.KeyBoardUtils;
 import nwsuaf.com.exam.util.OutputUtil;
+import nwsuaf.com.exam.util.SPUtils;
 import nwsuaf.com.exam.util.TimeUtils;
 import okhttp3.Call;
 
@@ -52,6 +56,8 @@ public class ExamFinalActivity extends BaseActivity {
 
     private NetObject_ProblemData localdata;
     private CountDownTimer mTimer;
+    private long mCurrentTime;
+    private final long default_time = 180000;
     private FAnswerService answerService;
 
     @Override
@@ -136,9 +142,10 @@ public class ExamFinalActivity extends BaseActivity {
             mData.clear();
             mData.addAll(localdata.getData());
             create(mData.size());
-            setTitle(TimeUtils.formatTime(localdata.getTime()));
+            mCurrentTime = Long.valueOf(String.valueOf(SPUtils.get(this,"lasttime",default_time)));
+            setTitle(TimeUtils.formatTime(mCurrentTime));
             onLoading(false);
-            startCountDownTimer(localdata.getTime());
+            startCountDownTimer(mCurrentTime);
         }else{
             String url = new StringBuffer(AppConstants.LOCAL_HOST)
                     .append("/getProblemData").toString();
@@ -195,6 +202,7 @@ public class ExamFinalActivity extends BaseActivity {
         mTimer = new CountDownTimer(time, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
+                mCurrentTime = millisUntilFinished;
                 setTitle(TimeUtils.formatTime(millisUntilFinished));
             }
 
@@ -277,8 +285,6 @@ public class ExamFinalActivity extends BaseActivity {
             super.onPostExecute(result);
             if (result.equals("答案保存成功")) {
                 Toast.makeText(ExamFinalActivity.this, result, Toast.LENGTH_LONG).show();
-/*                FileUtils.delFile("examcache.out");
-                finish();*/
             } else {
                 Toast.makeText(ExamFinalActivity.this, result, Toast.LENGTH_LONG).show();
             }
@@ -293,8 +299,9 @@ public class ExamFinalActivity extends BaseActivity {
                 .append("/sentAnswerToNet").toString();
         File sdCardDir = Environment.getExternalStorageDirectory();//获取sd卡目录
         File sdFile = new File(sdCardDir, AppConstants.LOCAL_ANSWER_BAK);
-        if (FileUtils.isFileExist(AppConstants.LOCAL_ANSWER_BAK)) {
-            OkHttpUtils
+        if (sdFile.exists()) {
+            //提交文件
+            /*OkHttpUtils
                     .postFile()
                     .url(url)
                     .file(sdFile)
@@ -310,6 +317,32 @@ public class ExamFinalActivity extends BaseActivity {
                             FileUtils.delFile("examcache.out");
                             dismissProgressDialog();
                             finish();
+                        }
+                    });*/
+            //暂时先用GET测试
+
+            OkHttpUtils
+                    .get()
+                    .url(url)
+                    .build()
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onError(Call call, Exception e, int id) {
+
+                        }
+
+                        @Override
+                        public void onResponse(String response, int id) {
+                            dismissProgressDialog();
+                            CustomResponse res = new Gson().fromJson(response, CustomResponse.class);
+                            if(res.getCode().equals(AppConstants.SUCCESS_SENTANSWER)){
+                                ToastMsg(ExamFinalActivity.this, res.getMsg());
+                                answerService.deleteAll();
+                                FileUtils.delFile(AppConstants.LOCAL_DATA_BAK);
+                                finish();
+                            }else{
+                                ToastMsg(ExamFinalActivity.this, res.getMsg());
+                            }
                         }
                     });
         } else {
@@ -356,6 +389,7 @@ public class ExamFinalActivity extends BaseActivity {
             Log.i("Mcache","执行");
             getAnswer();
             answerService.inserAnswer(mFAnswer);
+            SPUtils.put(ExamFinalActivity.this,"lasttime",mCurrentTime);
             handler.postDelayed(this, 10000);
         }
     };

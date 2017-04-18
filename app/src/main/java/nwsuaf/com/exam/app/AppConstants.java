@@ -53,9 +53,10 @@ public class AppConstants {
     public static final String NOTHINGFOUND = "111";
     public static final String SUCCESSFOUND = "201";
     public static final String SELECTERROR = "401";
-    public static final String SUCCESS_CREATE_CLASS = "204";
-    public static final String SUCCESS_GETCLASSLIST = "205";
-    public static final String SUCCESS_GETPROBLEM = "206";
+    public static final String SUCCESS_CREATE_CLASS = "204";                    //创建班级成功
+    public static final String SUCCESS_GETCLASSLIST = "205";                    //获得班级状态成功
+    public static final String SUCCESS_GETPROBLEM = "206";                      //获得题目成功
+    public static final String SUCCESS_SENTANSWER = "207";                      //提交成绩成功
 
     /**
      * 图片缓存
