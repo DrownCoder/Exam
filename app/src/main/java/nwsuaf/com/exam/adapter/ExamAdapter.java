@@ -15,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import nwsuaf.com.exam.R;
-import nwsuaf.com.exam.entity.netmodel.Answer;
+import nwsuaf.com.exam.entity.netmodel.FAnswer;
 import nwsuaf.com.exam.entity.netmodel.ProblemData;
 
 /**
@@ -25,15 +25,15 @@ import nwsuaf.com.exam.entity.netmodel.ProblemData;
 public class ExamAdapter extends PagerAdapter{
     //显示的数据
     private List<ProblemData> datas = null;
-    private List<Answer> mAnswer;
+    private List<FAnswer> mFAnswer;
     private LinkedList<View> mViewCache = null;
     private Context mContext ;
     private LayoutInflater mLayoutInflater = null;
 
-    public ExamAdapter(Context context, List<ProblemData> mData , List<Answer> mAnswer) {
+    public ExamAdapter(Context context, List<ProblemData> mData , List<FAnswer> mFAnswer) {
         mContext = context;
         datas = mData;
-        this.mAnswer = mAnswer;
+        this.mFAnswer = mFAnswer;
         this.mLayoutInflater = LayoutInflater.from(mContext) ;
         this.mViewCache = new LinkedList<>();
         if(datas == null){
@@ -51,7 +51,7 @@ public class ExamAdapter extends PagerAdapter{
         ViewHolder viewHolder = null;
         View convertView = null;
         List<String> mImgList = datas.get(position).getImgList();
-        Answer answer = mAnswer.get(position);
+        FAnswer FAnswer = mFAnswer.get(position);
         if(mViewCache.size() == 0){
             convertView = this.mLayoutInflater.inflate(R.layout.exam_final_layout ,
                     null ,false);
@@ -66,14 +66,14 @@ public class ExamAdapter extends PagerAdapter{
         Glide.with(mContext).load(mImgList.get(2)).crossFade().into(viewHolder.pic3);
         Glide.with(mContext).load(mImgList.get(3)).crossFade().into(viewHolder.pic4);
 
-        if(answer.isEmpty()){
+        if(FAnswer.isEmpty()){
             viewHolder.ke.setText("");
             viewHolder.shu.setText("");
             viewHolder.zhong.setText("");
         }else{
-            viewHolder.ke.setText(answer.getKe());
-            viewHolder.shu.setText(answer.getShu());
-            viewHolder.zhong.setText(answer.getZhong());
+            viewHolder.ke.setText(FAnswer.getKe());
+            viewHolder.shu.setText(FAnswer.getShu());
+            viewHolder.zhong.setText(FAnswer.getZhong());
         }
         container.addView(convertView ,ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT );
 

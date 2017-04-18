@@ -1,25 +1,20 @@
 package nwsuaf.com.exam.activity;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,19 +25,18 @@ import nwsuaf.com.exam.adapter.FragmentAdapter;
 import nwsuaf.com.exam.app.AppConstants;
 import nwsuaf.com.exam.callback.ProblemCallback;
 import nwsuaf.com.exam.customview.CustomDialog;
-import nwsuaf.com.exam.entity.netmodel.Answer;
+import nwsuaf.com.exam.entity.netmodel.FAnswer;
 import nwsuaf.com.exam.entity.netmodel.NetObject_Answer;
-import nwsuaf.com.exam.entity.netmodel.NetObject_Problem;
 import nwsuaf.com.exam.entity.netmodel.NetObject_ProblemData;
 import nwsuaf.com.exam.entity.netmodel.ProblemData;
 import nwsuaf.com.exam.fragment.ExamDetailFragment;
+import nwsuaf.com.exam.service.FAnswerService;
 import nwsuaf.com.exam.util.FileUtils;
 import nwsuaf.com.exam.util.GetUserInfo;
 import nwsuaf.com.exam.util.InputUtil;
 import nwsuaf.com.exam.util.KeyBoardUtils;
 import nwsuaf.com.exam.util.OutputUtil;
 import nwsuaf.com.exam.util.TimeUtils;
-import nwsuaf.com.exam.util.WebToolUtils;
 import okhttp3.Call;
 
 public class ExamFinalActivity extends BaseActivity {
@@ -53,11 +47,12 @@ public class ExamFinalActivity extends BaseActivity {
     //遮罩层
     private RelativeLayout mLayoutLoading;
 
-    private List<Answer> mAnswer;
+    private List<FAnswer> mFAnswer;
     private List<Fragment> mFragments;
 
     private NetObject_ProblemData localdata;
     private CountDownTimer mTimer;
+    private FAnswerService answerService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +62,8 @@ public class ExamFinalActivity extends BaseActivity {
         initView();
         initData();
         initEvent();
+
+        saveAnswertoLocal();
     }
 
     private void initEvent() {
@@ -122,10 +119,11 @@ public class ExamFinalActivity extends BaseActivity {
     private void initData() {
         setRightText("提交");
         mData = new ArrayList<>();
-        mAnswer = new ArrayList<>();
         mFragments = new ArrayList<>();
+        answerService = new FAnswerService(ExamFinalActivity.this);
+        CreateAnswers();
         getProblemDate();
-        //mAdapter = new ExamAdapter(ExamFinalActivity.this , mData ,mAnswer);
+        //mAdapter = new ExamAdapter(ExamFinalActivity.this , mData ,mFAnswer);
         mAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         mViewPager.setAdapter(mAdapter);
     }
@@ -214,13 +212,17 @@ public class ExamFinalActivity extends BaseActivity {
      * @param size
      */
     private void create(int size) {
-        for (int i = 0; i < size; i++) {
-            Answer item = new Answer();
-            mAnswer.add(item);
+        if(mFAnswer.size()<=0){
+            for (int i = 0; i < size; i++) {
+                FAnswer item = new FAnswer();
+                mFAnswer.add(item);
+            }
         }
+
         for (int i = 0; i < size; i++) {
             ExamDetailFragment fragment = new ExamDetailFragment();
             fragment.setData(mData.get(i));
+            fragment.setAnswer(mFAnswer.get(i));
             mFragments.add(fragment);
         }
     }
@@ -316,17 +318,60 @@ public class ExamFinalActivity extends BaseActivity {
     }
 
     /**
+     * 初始化Answer
+     */
+    private void CreateAnswers() {
+        if (answerService.getGroupData().size()<= 0||!CheckNetData()) {
+            mFAnswer = new ArrayList<>();
+        } else {
+            //如果是崩溃重新进入情况
+            mFAnswer = answerService.getGroupData();
+        }
+    }
+
+    /**
      * 备份答案到本地
      */
     private boolean saveAnswerToLocal() {
-        for (Fragment fragment : mFragments) {
-            mAnswer.add(((ExamDetailFragment) fragment).getAnswer());
-        }
+        getAnswer();
         NetObject_Answer netAnswer = new NetObject_Answer();
         netAnswer.setId(GetUserInfo.getPeo_id());
-        netAnswer.setData(mAnswer);
+        netAnswer.setData(mFAnswer);
         //备份答案到本地
         return new OutputUtil<NetObject_Answer>()
                 .writObjectIntoSDcard(AppConstants.LOCAL_ANSWER_BAK, netAnswer);
+    }
+
+    private void getAnswer() {
+        mFAnswer.clear();
+        for (Fragment fragment : mFragments) {
+            mFAnswer.add(((ExamDetailFragment) fragment).getAnswer());
+        }
+    }
+
+    private Handler handler = new Handler();
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.i("Mcache","执行");
+            getAnswer();
+            answerService.inserAnswer(mFAnswer);
+            handler.postDelayed(this, 10000);
+        }
+    };
+    public void saveAnswertoLocal() {
+        handler.postDelayed(runnable,10000);
+    }
+
+    @Override
+    protected void onDestroy() {
+        handler.removeCallbacks(runnable);
+        runnable = null;
+        handler = null;
+        if(mTimer!=null){
+            mTimer.cancel();
+            mTimer = null;
+        }
+        super.onDestroy();
     }
 }

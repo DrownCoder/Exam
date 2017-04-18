@@ -9,17 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
-
-import com.bumptech.glide.Glide;
-
-import java.util.List;
 
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.adapter.PicAdapter;
-import nwsuaf.com.exam.entity.netmodel.Answer;
+import nwsuaf.com.exam.entity.netmodel.FAnswer;
 import nwsuaf.com.exam.entity.netmodel.ProblemData;
-import nwsuaf.com.exam.util.TimeUtils;
 
 /**
  * Created by dengzhaoxuan on 2017/4/13.
@@ -32,6 +26,7 @@ public class ExamDetailFragment extends Fragment {
     private EditText zhong;
 
     private ProblemData mData;
+    private FAnswer mAnswer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,8 +40,9 @@ public class ExamDetailFragment extends Fragment {
     public void setData(ProblemData data) {
         this.mData = data;
     }
-
-
+    public void setAnswer(FAnswer answer){
+        this.mAnswer = answer;
+    }
     private void initView(View view) {
         mRcyPicList = (RecyclerView) view.findViewById(R.id.rcy_piclist);
         mRcyPicList.setLayoutManager(new GridLayoutManager(getActivity(),2));
@@ -54,10 +50,16 @@ public class ExamDetailFragment extends Fragment {
         ke = (EditText) view.findViewById(R.id.et_ke);
         shu = (EditText) view.findViewById(R.id.et_shu);
         zhong = (EditText) view.findViewById(R.id.et_zhong);
+
+        if(mAnswer!=null){
+            ke.setText(TextUtils.isEmpty(mAnswer.getKe())?"":mAnswer.getKe());
+            shu.setText(TextUtils.isEmpty(mAnswer.getShu())?"":mAnswer.getShu());
+            zhong.setText(TextUtils.isEmpty(mAnswer.getZhong())?"":mAnswer.getZhong());
+        }
     }
 
-    public Answer getAnswer(){
-        Answer answer = new Answer();
+    public FAnswer getAnswer(){
+        FAnswer FAnswer = new FAnswer();
         String anske = "";
         String ansshu = "";
         String anszhong = "";
@@ -70,10 +72,10 @@ public class ExamDetailFragment extends Fragment {
         if(zhong != null && !TextUtils.isEmpty(zhong.getText().toString())){
             anszhong = zhong.getText().toString();
         }
-        answer.setId(mData.getId());
-        answer.setKe(anske);
-        answer.setShu(ansshu);
-        answer.setZhong(anszhong);
-        return answer;
+        FAnswer.setId(mData.getId());
+        FAnswer.setKe(anske);
+        FAnswer.setShu(ansshu);
+        FAnswer.setZhong(anszhong);
+        return FAnswer;
     }
 }
