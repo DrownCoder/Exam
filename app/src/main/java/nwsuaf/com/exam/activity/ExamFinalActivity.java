@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -61,6 +62,7 @@ public class ExamFinalActivity extends BaseActivity {
     private long mCurrentTime;
     private final long default_time = 180000;
     private FAnswerService answerService;
+    //用于中断线程
     private AtomicBoolean mIsServiceDestoryed = new AtomicBoolean(false);
 
     @Override
@@ -239,6 +241,8 @@ public class ExamFinalActivity extends BaseActivity {
             try {
                 if (saveAnswerToLocal()) {
                     result = "答案保存成功";
+                    answerService.deleteAll();
+                    FileUtils.delFile(AppConstants.LOCAL_DATA_BAK);
                     sentAnswerToNet();
                 } else {
                     result = "答案保存失败";
@@ -307,7 +311,7 @@ public class ExamFinalActivity extends BaseActivity {
                 .execute(new ProblemCallback() {
                     @Override
                     public void onResponse(NetObject_ProblemData response, int id) {
-                        NetObject_ProblemData res = response;
+                        final NetObject_ProblemData res = response;
                         if (res.getCode().equals(AppConstants.SUCCESS_GETPROBLEM)) {
                             mData.clear();
                             mData.addAll(res.getData());
@@ -317,9 +321,14 @@ public class ExamFinalActivity extends BaseActivity {
                             onLoading(false);
                             startCountDownTimer(res.getTime());
 
-                            //备份数据到本地
-                            new OutputUtil<NetObject_ProblemData>()
-                                    .writObjectIntoSDcard(AppConstants.LOCAL_DATA_BAK, res);
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //备份数据到本地
+                                    new OutputUtil<NetObject_ProblemData>()
+                                            .writObjectIntoSDcard(AppConstants.LOCAL_DATA_BAK, res);
+                                }
+                            }).start();
                         } else {
                             Toast.makeText(ExamFinalActivity.this, res.getMsg(), Toast.LENGTH_SHORT).show();
                         }
@@ -376,8 +385,6 @@ public class ExamFinalActivity extends BaseActivity {
                                     CustomResponse res = new Gson().fromJson(response, CustomResponse.class);
                                     if (res.getCode().equals(AppConstants.SUCCESS_SENTANSWER)) {
                                         ToastMsg(ExamFinalActivity.this, res.getMsg());
-                                        answerService.deleteAll();
-                                        FileUtils.delFile(AppConstants.LOCAL_DATA_BAK);
                                         finish();
                                     } else {
                                         ToastMsg(ExamFinalActivity.this, res.getMsg());
