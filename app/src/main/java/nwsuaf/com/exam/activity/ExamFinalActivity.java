@@ -17,9 +17,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.base.BaseActivity;
@@ -59,6 +61,7 @@ public class ExamFinalActivity extends BaseActivity {
     private long mCurrentTime;
     private final long default_time = 180000;
     private FAnswerService answerService;
+    private AtomicBoolean mIsServiceDestoryed = new AtomicBoolean(false);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +94,7 @@ public class ExamFinalActivity extends BaseActivity {
         setRightClickedListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mTimer.cancel();
                 //确认提交？
                 showConfirmDialog();
             }
@@ -106,6 +110,7 @@ public class ExamFinalActivity extends BaseActivity {
         customBuilder.setTitle("交卷")
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
+                        startCountDownTimer(mCurrentTime);
                         dialog.dismiss();
                     }
                 })
@@ -113,6 +118,7 @@ public class ExamFinalActivity extends BaseActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        mIsServiceDestoryed.set(true);
                         //交卷
                         new SentToServerTask().execute();
                     }
@@ -126,9 +132,10 @@ public class ExamFinalActivity extends BaseActivity {
         setRightText("提交");
         mData = new ArrayList<>();
         mFragments = new ArrayList<>();
+        mFAnswer = new ArrayList<>();
         answerService = new FAnswerService(ExamFinalActivity.this);
-        CreateAnswers();
-        getProblemDate();
+        //getProblemDate();
+        new GetDataTask().execute();
         //mAdapter = new ExamAdapter(ExamFinalActivity.this , mData ,mFAnswer);
         mAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         mViewPager.setAdapter(mAdapter);
@@ -138,43 +145,10 @@ public class ExamFinalActivity extends BaseActivity {
      * 联网获取题目
      */
     private void getProblemDate() {
-        if(CheckNetData()){
-            mData.clear();
-            mData.addAll(localdata.getData());
-            create(mData.size());
-            mCurrentTime = Long.valueOf(String.valueOf(SPUtils.get(this,"lasttime",default_time)));
-            setTitle(TimeUtils.formatTime(mCurrentTime));
-            onLoading(false);
-            startCountDownTimer(mCurrentTime);
-        }else{
-            String url = new StringBuffer(AppConstants.LOCAL_HOST)
-                    .append("/getProblemData").toString();
-            OkHttpUtils
-                    .get()
-                    .url(url)
-                    .addParams("classname", GetUserInfo.getClass_name())
-                    .build()
-                    .execute(new ProblemCallback() {
-                        @Override
-                        public void onResponse(NetObject_ProblemData response, int id) {
-                            NetObject_ProblemData res = response;
-                            if (res.getCode().equals(AppConstants.SUCCESS_GETPROBLEM)) {
-                                mData.clear();
-                                mData.addAll(res.getData());
-                                create(mData.size());
-                                setTitle(TimeUtils.formatTime(res.getTime()));
-                                mAdapter.notifyDataSetChanged();
-                                onLoading(false);
-                                startCountDownTimer(res.getTime());
-
-                                //备份数据到本地
-                                new OutputUtil<NetObject_ProblemData>()
-                                        .writObjectIntoSDcard(AppConstants.LOCAL_DATA_BAK, res);
-                            } else {
-                                Toast.makeText(ExamFinalActivity.this, res.getMsg(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+        if (CheckNetData()) {
+            new GetDataTask().execute();
+        } else {
+            getDataFromNet();
         }
     }
 
@@ -220,12 +194,7 @@ public class ExamFinalActivity extends BaseActivity {
      * @param size
      */
     private void create(int size) {
-        if(mFAnswer.size()<=0){
-            for (int i = 0; i < size; i++) {
-                FAnswer item = new FAnswer();
-                mFAnswer.add(item);
-            }
-        }
+        CreateAnswers(size);
 
         for (int i = 0; i < size; i++) {
             ExamDetailFragment fragment = new ExamDetailFragment();
@@ -249,7 +218,7 @@ public class ExamFinalActivity extends BaseActivity {
     public void onLoading(boolean isLoading) {
         if (isLoading) {
             mLayoutLoading.setVisibility(View.VISIBLE);
-            showProgressDialog(ExamFinalActivity.this,"数据加载中……");
+            showProgressDialog(ExamFinalActivity.this, "数据加载中……");
         } else {
             mLayoutLoading.setVisibility(View.GONE);
             dismissProgressDialog();
@@ -261,7 +230,7 @@ public class ExamFinalActivity extends BaseActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             mTimer.cancel();
-            showProgressDialog(ExamFinalActivity.this,"提交中……");
+            showProgressDialog(ExamFinalActivity.this, "提交中……");
         }
 
         @Override
@@ -289,6 +258,73 @@ public class ExamFinalActivity extends BaseActivity {
                 Toast.makeText(ExamFinalActivity.this, result, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    /**
+     * 获取数据
+     * -本地
+     * -联网
+     */
+    private class GetDataTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            if (CheckNetData()) {
+                mData.clear();
+                mData.addAll(localdata.getData());
+                create(mData.size());
+                mCurrentTime = Long.valueOf(String.valueOf(SPUtils.get(ExamFinalActivity.this
+                        , "lasttime", default_time)));
+            } else {
+                getDataFromNet();
+                return "NET";
+            }
+            return "LOCAL";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.i("type", s);
+            if(s.equals("LOCAL")){
+                mAdapter.notifyDataSetChanged();
+                setTitle(TimeUtils.formatTime(mCurrentTime));
+                onLoading(false);
+                startCountDownTimer(mCurrentTime);
+            }
+        }
+    }
+
+    /**
+     * 联网获取数据
+     */
+    private void getDataFromNet() {
+        String url = new StringBuffer(AppConstants.LOCAL_HOST)
+                .append("/getProblemData").toString();
+        OkHttpUtils
+                .get()
+                .url(url)
+                .addParams("classname", GetUserInfo.getClass_name())
+                .build()
+                .execute(new ProblemCallback() {
+                    @Override
+                    public void onResponse(NetObject_ProblemData response, int id) {
+                        NetObject_ProblemData res = response;
+                        if (res.getCode().equals(AppConstants.SUCCESS_GETPROBLEM)) {
+                            mData.clear();
+                            mData.addAll(res.getData());
+                            create(mData.size());
+                            setTitle(TimeUtils.formatTime(res.getTime()));
+                            mAdapter.notifyDataSetChanged();
+                            onLoading(false);
+                            startCountDownTimer(res.getTime());
+
+                            //备份数据到本地
+                            new OutputUtil<NetObject_ProblemData>()
+                                    .writObjectIntoSDcard(AppConstants.LOCAL_DATA_BAK, res);
+                        } else {
+                            Toast.makeText(ExamFinalActivity.this, res.getMsg(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 
     /**
@@ -332,17 +368,22 @@ public class ExamFinalActivity extends BaseActivity {
                         }
 
                         @Override
-                        public void onResponse(String response, int id) {
-                            dismissProgressDialog();
-                            CustomResponse res = new Gson().fromJson(response, CustomResponse.class);
-                            if(res.getCode().equals(AppConstants.SUCCESS_SENTANSWER)){
-                                ToastMsg(ExamFinalActivity.this, res.getMsg());
-                                answerService.deleteAll();
-                                FileUtils.delFile(AppConstants.LOCAL_DATA_BAK);
-                                finish();
-                            }else{
-                                ToastMsg(ExamFinalActivity.this, res.getMsg());
-                            }
+                        public void onResponse(final String response, int id) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dismissProgressDialog();
+                                    CustomResponse res = new Gson().fromJson(response, CustomResponse.class);
+                                    if (res.getCode().equals(AppConstants.SUCCESS_SENTANSWER)) {
+                                        ToastMsg(ExamFinalActivity.this, res.getMsg());
+                                        answerService.deleteAll();
+                                        FileUtils.delFile(AppConstants.LOCAL_DATA_BAK);
+                                        finish();
+                                    } else {
+                                        ToastMsg(ExamFinalActivity.this, res.getMsg());
+                                    }
+                                }
+                            }, 10000);
                         }
                     });
         } else {
@@ -353,12 +394,18 @@ public class ExamFinalActivity extends BaseActivity {
     /**
      * 初始化Answer
      */
-    private void CreateAnswers() {
-        if (answerService.getGroupData().size()<= 0||!CheckNetData()) {
-            mFAnswer = new ArrayList<>();
+    private void CreateAnswers(int size) {
+        if (answerService.getGroupData().size() <= 0 || !CheckNetData()) {
+            if (mFAnswer.size() <= 0) {
+                for (int i = 0; i < size; i++) {
+                    FAnswer item = new FAnswer();
+                    mFAnswer.add(item);
+                }
+            }
         } else {
             //如果是崩溃重新进入情况
             mFAnswer = answerService.getGroupData();
+            Log.i("size", "" + answerService.getGroupData().size());
         }
     }
 
@@ -382,27 +429,47 @@ public class ExamFinalActivity extends BaseActivity {
         }
     }
 
-    private Handler handler = new Handler();
+    /*private Handler handler = new Handler();
     Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            Log.i("Mcache","执行");
+            Log.i("Mcache", "执行");
             getAnswer();
             answerService.inserAnswer(mFAnswer);
-            SPUtils.put(ExamFinalActivity.this,"lasttime",mCurrentTime);
+            SPUtils.put(ExamFinalActivity.this, "lasttime", mCurrentTime);
             handler.postDelayed(this, 10000);
         }
-    };
+    };*/
+
+    public class ServiceWorker implements Runnable {
+        @Override
+        public void run() {
+            while (!mIsServiceDestoryed.get()) {
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Log.i("Mcache", "执行");
+                getAnswer();
+                answerService.inserAnswer(mFAnswer);
+                SPUtils.put(ExamFinalActivity.this, "lasttime", mCurrentTime);
+            }
+        }
+    }
+
     public void saveAnswertoLocal() {
-        handler.postDelayed(runnable,10000);
+        //handler.postDelayed(runnable, 10000);
+        new Thread(new ServiceWorker()).start();
     }
 
     @Override
     protected void onDestroy() {
-        handler.removeCallbacks(runnable);
+        /*handler.removeCallbacks(runnable);
         runnable = null;
-        handler = null;
-        if(mTimer!=null){
+        handler = null;*/
+        mIsServiceDestoryed.set(true);
+        if (mTimer != null) {
             mTimer.cancel();
             mTimer = null;
         }
