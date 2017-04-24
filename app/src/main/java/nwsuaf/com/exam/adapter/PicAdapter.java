@@ -37,7 +37,10 @@ public class PicAdapter extends RecyclerView.Adapter<PicAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         if(mPicList!=null){
-            Glide.with(mContext).load(mPicList.get(position)).crossFade().into(holder.img);
+            Glide.with(mContext).load(mPicList.get(position))
+                    .error(R.drawable.pic_error)
+                    .crossFade()
+                    .into(holder.img);
         }
     }
 
@@ -46,9 +49,9 @@ public class PicAdapter extends RecyclerView.Adapter<PicAdapter.ViewHolder> {
         return mPicList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    class ViewHolder extends RecyclerView.ViewHolder{
         private ImageView img;
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             img = (ImageView) view.findViewById(R.id.iv_pic);
         }

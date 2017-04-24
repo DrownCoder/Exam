@@ -20,9 +20,9 @@ public class DBController
     private static DaoSession daoSchoolSession;
 
 
-    public static final String DATABASE_NAME = "problems.db";
+    public static final String DATABASE_NAME = "exam.db";
 
-    public static final String DATABASE_SCHOOL_NAME = "problems.db";
+    public static final String DATABASE_SCHOOL_NAME = "exam.db";
 
     private static DaoMaster obtainMaster(Context context, String dbName)
     {

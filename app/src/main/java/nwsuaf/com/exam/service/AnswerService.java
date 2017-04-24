@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.IOException;
 import java.util.List;
 
+import nwsuaf.com.exam.app.AppConstants;
 import nwsuaf.com.exam.db.DBController;
 import nwsuaf.com.exam.db.ExamDBHelper;
 import nwsuaf.com.exam.entity.answer;
@@ -25,7 +26,7 @@ public class AnswerService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        answerDao = DBController.getDaoSession(DBController.DATABASE_SCHOOL_NAME).getAnswerDao();
+        answerDao = DBController.getDaoSession(AppConstants.LOCAL_DB_NAME).getAnswerDao();
     }
 
     /**
