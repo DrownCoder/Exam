@@ -68,7 +68,7 @@ public class CreateClassActivity extends BaseActivity {
                     @Override
                     public void onResponse(NetObject_Peo response, int id) {
                         NetObject_Peo res = (NetObject_Peo) response;
-                        if (res.getCode().equals(AppConstants.SUCCESS_CREATE_CLASS)) {
+                        if (res.getCode().equals(AppConstants.SUCCESSLOGIN)) {
                             Toast.makeText(CreateClassActivity.this, "创建成功！", Toast.LENGTH_SHORT).show();
                             mBitmap = CodeUtils.createImage(key, 400, 400, null);
                             mClassPic.setImageBitmap(mBitmap);

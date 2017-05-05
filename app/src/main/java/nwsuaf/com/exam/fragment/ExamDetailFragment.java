@@ -1,5 +1,6 @@
 package nwsuaf.com.exam.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import nwsuaf.com.exam.R;
+import nwsuaf.com.exam.activity.ExamFinalActivity;
+import nwsuaf.com.exam.activity.ImageDetailActivity;
 import nwsuaf.com.exam.adapter.PicAdapter;
 import nwsuaf.com.exam.entity.netmodel.FAnswer;
 import nwsuaf.com.exam.entity.netmodel.ProblemData;
@@ -21,6 +24,7 @@ import nwsuaf.com.exam.entity.netmodel.ProblemData;
 
 public class ExamDetailFragment extends Fragment {
     private RecyclerView mRcyPicList;
+    private PicAdapter mAdapter;
     private EditText ke;
     private EditText shu;
     private EditText zhong;
@@ -34,7 +38,19 @@ public class ExamDetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.exam_final_layout, container, false);
         initView(view);
+        initEvents();
         return view;
+    }
+
+    private void initEvents() {
+        mAdapter.setmOnItemClickListener(new PicAdapter.onItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Intent intent = new Intent(getActivity(), ImageDetailActivity.class);
+                intent.putExtra("url", mData.getImgList().get(position));
+                startActivity(intent);
+            }
+        });
     }
 
     public void setData(ProblemData data) {
@@ -45,8 +61,9 @@ public class ExamDetailFragment extends Fragment {
     }
     private void initView(View view) {
         mRcyPicList = (RecyclerView) view.findViewById(R.id.rcy_piclist);
-        mRcyPicList.setLayoutManager(new GridLayoutManager(getActivity(),2));
-        mRcyPicList.setAdapter(new PicAdapter(getActivity(),mData.getImgList()));
+        mRcyPicList.setLayoutManager(new GridLayoutManager(getActivity(),1));
+        mAdapter = new PicAdapter(getActivity(), mData.getImgList());
+        mRcyPicList.setAdapter(mAdapter);
         ke = (EditText) view.findViewById(R.id.et_ke);
         shu = (EditText) view.findViewById(R.id.et_shu);
         zhong = (EditText) view.findViewById(R.id.et_zhong);

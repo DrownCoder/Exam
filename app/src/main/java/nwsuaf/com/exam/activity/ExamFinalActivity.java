@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -15,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -204,6 +202,7 @@ public class ExamFinalActivity extends BaseActivity {
             fragment.setAnswer(mFAnswer.get(i));
             mFragments.add(fragment);
         }
+        mAdapter.notifyDataSetChanged();
     }
 
     private void initView() {
@@ -317,7 +316,6 @@ public class ExamFinalActivity extends BaseActivity {
                             mData.addAll(res.getData());
                             create(mData.size());
                             setTitle(TimeUtils.formatTime(res.getTime()));
-                            mAdapter.notifyDataSetChanged();
                             onLoading(false);
                             startCountDownTimer(res.getTime());
 

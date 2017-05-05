@@ -42,7 +42,7 @@ public class AppConstants {
     /**
      * 服务器
      */
-    public static final String LOCAL_HOST                  ="http://192.168.88.158:8089";
+    public static final String LOCAL_HOST                  ="http://192.168.139.1:8089";
     public static final String WEBSERVER                   ="/ExamSystemWebPro";
     public final static String DONTEXIST = "100";
     public final static String WRONGPASSWORD = "200";
@@ -64,4 +64,8 @@ public class AppConstants {
     public static final String APP_DIR                    = Environment.getExternalStorageDirectory() + "/Exam";
     public static final String APP_TEMP                   = APP_DIR + "/temp";
     public static final String APP_IMAGE = APP_DIR + "/image";
+    /**
+     * 倒计时
+     */
+    public static final int WAIT_SENT_TIME = 10000;                             //发卷倒计时
 }

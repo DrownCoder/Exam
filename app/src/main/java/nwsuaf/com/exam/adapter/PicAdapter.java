@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nwsuaf.com.exam.R;
+import uk.co.senab.photoview.PhotoView;
 
 /**
  * Created by dengzhaoxuan on 2017/4/17.
@@ -21,6 +22,15 @@ import nwsuaf.com.exam.R;
 public class PicAdapter extends RecyclerView.Adapter<PicAdapter.ViewHolder> {
     private Context mContext;
     private List<String> mPicList;
+    public interface onItemClickListener{
+        void onItemClick(int position);
+    }
+    private onItemClickListener mOnItemClickListener;
+
+    public void setmOnItemClickListener(onItemClickListener mOnItemClickListener) {
+        this.mOnItemClickListener = mOnItemClickListener;
+    }
+
     public PicAdapter(Context context, List<String> piclist) {
         this.mContext = context;
         this.mPicList = piclist;
@@ -35,12 +45,18 @@ public class PicAdapter extends RecyclerView.Adapter<PicAdapter.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         if(mPicList!=null){
             Glide.with(mContext).load(mPicList.get(position))
                     .error(R.drawable.pic_error)
                     .crossFade()
                     .into(holder.img);
+            holder.img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnItemClickListener.onItemClick(position);
+                }
+            });
         }
     }
 

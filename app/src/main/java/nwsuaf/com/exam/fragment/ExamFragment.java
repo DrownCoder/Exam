@@ -109,7 +109,7 @@ public class ExamFragment extends Fragment implements View.OnClickListener {
         dialog = customBuilder.create();
         dialog.show();
         Random random = new Random();
-        int time = random.nextInt(90000);
+        int time = random.nextInt(AppConstants.WAIT_SENT_TIME);
         customBuilder.startUpdateTime(random.nextInt(time));
         customBuilder.dialog_time.setOnCountdownEndListener(new CountdownView.OnCountdownEndListener() {
             @Override

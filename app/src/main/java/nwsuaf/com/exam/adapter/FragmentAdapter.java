@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,7 +15,11 @@ public class FragmentAdapter extends FragmentPagerAdapter{
     private List<Fragment> mFragmentList;
     public FragmentAdapter(FragmentManager fm , List<Fragment> fragments) {
         super(fm);
-        this.mFragmentList = fragments;
+        if (fragments == null) {
+            this.mFragmentList = new ArrayList<>();
+        }else{
+            this.mFragmentList = fragments;
+        }
     }
 
     @Override
