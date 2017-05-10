@@ -519,11 +519,14 @@ public class ExamActivity extends BaseActivity implements View.OnClickListener, 
     public void onPageSelected(int position) {
         //saveAnswer();
         //mAdapter.notifyDataSetChanged();
-        mAdapter.multans = new int[]{0, 0, 0, 0, 0};
-        String curanswer = answers.get(position).getAnswer() == null ? "" : answers.get(position).getAnswer();
-        Log.e("ans", curanswer);
-        resetArray(curanswer);
-        Log.e("position", String.valueOf(position));
+        if(answers != null){
+            mAdapter.multans = new int[]{0, 0, 0, 0, 0};
+            String curanswer = answers.get(position).getAnswer() == null ? "" : answers.get(position).getAnswer();
+            Log.e("ans", curanswer);
+            resetArray(curanswer);
+            Log.e("position", String.valueOf(position));
+        }
+
 /*        for(int i =0;i<5;i++){
             Log.e("ans",mAdapter.)
         }*/
