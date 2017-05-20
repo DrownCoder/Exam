@@ -76,7 +76,8 @@ public class TeacherLoginFragment extends Fragment {
 
     private void teaLoginToNet() {
         String url = new StringBuffer(AppConstants.LOCAL_HOST)
-                .append("/login").toString();
+                .append(AppConstants.WEBSERVER)
+                .append("/login.do").toString();
                 /*.append("&stuid=")
                 .append(URLDecoder.decode(tv_id_uid.getText().toString()))
                 .append("&passwd=")
@@ -84,16 +85,16 @@ public class TeacherLoginFragment extends Fragment {
         OkHttpUtils
                 .get()
                 .url(url)
-                .addParams("teacherid", mTeacherId)
-                .addParams("teacherpasswd", mTeacherPasswd)
+                .addParams("username", mTeacherId)
+                .addParams("psd", mTeacherPasswd)
+                .addParams("isteacher","1")
                 .build()
                 .execute(new LoginCallback(){
                     @Override
-                    public void onResponse(NetObject_Peo response, int id) {
-                        NetObject_Peo res = (NetObject_Peo) response;
+                    public void onResponse(NetObject_Peo res, int id) {
                         if (res.getCode().equals(AppConstants.SUCCESSLOGIN)) {
                             Toast.makeText(getActivity(), "登录成功！", Toast.LENGTH_SHORT).show();
-                            UserInfo info = res.getData().get(0);
+                            UserInfo info = res.getData();
                             GetUserInfo.setClass_name(info.getStuclass());
                             GetUserInfo.setPeo_id(info.getStuid());
                             GetUserInfo.setPeo_name(info.getStuname());

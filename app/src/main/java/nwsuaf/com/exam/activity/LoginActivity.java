@@ -91,9 +91,9 @@ public class LoginActivity extends BaseActivity{
                 }
                 else if(returncode == AppConstants.SUCCESSLOGIN){
                     GetUserInfo.setIsGet(true);
-                    GetUserInfo.setPeo_name(data.getData().get(0).getStuname());
-                    GetUserInfo.setPeo_id(data.getData().get(0).getStuid());
-                    GetUserInfo.setClass_name(data.getData().get(0).getStuclass() + "");
+                    GetUserInfo.setPeo_name(data.getData().getStuname());
+                    GetUserInfo.setPeo_id(data.getData().getStuid());
+                    GetUserInfo.setClass_name(data.getData().getStuclass() + "");
                     Toast.makeText(act,"登录成功！",Toast.LENGTH_SHORT).show();
                     act.finish();
                 }

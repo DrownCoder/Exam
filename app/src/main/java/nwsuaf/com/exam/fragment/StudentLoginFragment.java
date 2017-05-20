@@ -100,7 +100,8 @@ public class StudentLoginFragment extends Fragment {
     @SuppressWarnings("unchecked")
     private void stuLoginToNet() {
         String url = new StringBuffer(AppConstants.LOCAL_HOST)
-                .append("/login").toString();
+                .append(AppConstants.WEBSERVER)
+                .append("/login.do").toString();
                 /*.append("&stuid=")
                 .append(URLDecoder.decode(tv_id_uid.getText().toString()))
                 .append("&passwd=")
@@ -108,17 +109,17 @@ public class StudentLoginFragment extends Fragment {
         OkHttpUtils
                 .get()
                 .url(url)
-                .addParams("stuclass", mStuClass)
-                .addParams("stuid", mStuId)
-                .addParams("stupasswd", mStuPasswd)
+                //.addParams("stuclass", mStuClass)
+                .addParams("username", mStuId)
+                .addParams("psd", mStuPasswd)
+                .addParams("isteacher","0")
                 .build()
                 .execute(new LoginCallback(){
                     @Override
-                    public void onResponse(NetObject_Peo response, int id) {
-                        NetObject_Peo res = (NetObject_Peo) response;
+                    public void onResponse(NetObject_Peo res, int id) {
                         if (res.getCode().equals(AppConstants.SUCCESSLOGIN)) {
                             Toast.makeText(getActivity(), "登录成功！", Toast.LENGTH_SHORT).show();
-                            UserInfo info = res.getData().get(0);
+                            UserInfo info = res.getData();
                             GetUserInfo.setClass_name(info.getStuclass());
                             GetUserInfo.setPeo_id(info.getStuid());
                             GetUserInfo.setPeo_name(info.getStuname());

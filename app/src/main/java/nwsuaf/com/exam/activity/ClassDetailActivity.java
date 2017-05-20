@@ -67,7 +67,9 @@ public class ClassDetailActivity extends BaseActivity {
 
     private void getClassDetail() {
         String url = new StringBuffer(AppConstants.LOCAL_HOST)
-                .append("/getClassDetail").toString();
+                .append(AppConstants.WEBSERVER)
+                .append("/users")
+                .append("/get.do").toString();
                 /*.append("&stuid=")
                 .append(URLDecoder.decode(tv_id_uid.getText().toString()))
                 .append("&passwd=")
@@ -75,20 +77,19 @@ public class ClassDetailActivity extends BaseActivity {
         OkHttpUtils
                 .get()
                 .url(url)
-                .addParams("teacherid", GetUserInfo.getPeo_id())
+                .addParams("classId", String.valueOf(mClassInfo.getId()))
                 .build()
-                .execute(new ClassDetailCallback(){
+                .execute(new ClassDetailCallback() {
                     @Override
-                    public void onResponse(NetObject_ClassDetail response, int id) {
-                        NetObject_ClassDetail res = (NetObject_ClassDetail) response;
+                    public void onResponse(NetObject_ClassDetail res, int id) {
                         if (res.getCode().equals(AppConstants.SUCCESS_GETCLASSLIST)) {
                             mData.clear();
                             mData.addAll(res.getData());
                             mAdapter.notifyDataSetChanged();
                             onLoading(false);
                             mSwipe.setRefreshing(false);
-                        }else{
-                            Toast.makeText(ClassDetailActivity.this,res.getMsg(),Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(ClassDetailActivity.this, res.getMsg(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

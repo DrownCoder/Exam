@@ -1,13 +1,9 @@
 package nwsuaf.com.exam.entity.netmodel;
 
 
-
-import java.util.List;
-
-
 public class NetObject_Peo {
     private String code;
-    private List<UserInfo> data;
+    private UserInfo data;
     private String msg;
 
     public String getMsg() {
@@ -26,11 +22,11 @@ public class NetObject_Peo {
         this.code = code;
     }
 
-    public List<UserInfo> getData() {
+    public UserInfo getData() {
         return data;
     }
 
-    public void setData(List<UserInfo> data) {
+    public void setData(UserInfo data) {
         this.data = data;
     }
 }

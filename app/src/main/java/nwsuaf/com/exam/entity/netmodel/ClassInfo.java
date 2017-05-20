@@ -9,7 +9,6 @@ import java.io.Serializable;
 public class ClassInfo implements Serializable{
     private int id;
     private String classname;
-    private int count;
     private int online;
     private int submit;
     private int unsubmit;
@@ -28,14 +27,6 @@ public class ClassInfo implements Serializable{
 
     public void setClassname(String classname) {
         this.classname = classname;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
     }
 
     public int getOnline() {

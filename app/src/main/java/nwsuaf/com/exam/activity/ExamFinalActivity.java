@@ -301,11 +301,13 @@ public class ExamFinalActivity extends BaseActivity {
      */
     private void getDataFromNet() {
         String url = new StringBuffer(AppConstants.LOCAL_HOST)
-                .append("/getProblemData").toString();
+                .append(AppConstants.WEBSERVER)
+                .append("/exam")
+                .append("/get.do").toString();
         OkHttpUtils
                 .get()
                 .url(url)
-                .addParams("classname", GetUserInfo.getClass_name())
+                .addParams("classId", GetUserInfo.getClass_name())
                 .build()
                 .execute(new ProblemCallback() {
                     @Override

@@ -14,7 +14,9 @@ import com.zhy.http.okhttp.OkHttpUtils;
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.base.BaseActivity;
 import nwsuaf.com.exam.app.AppConstants;
+import nwsuaf.com.exam.callback.CustomCallback;
 import nwsuaf.com.exam.callback.LoginCallback;
+import nwsuaf.com.exam.entity.netmodel.CustomResponse;
 import nwsuaf.com.exam.entity.netmodel.NetObject_Peo;
 import nwsuaf.com.exam.util.GetUserInfo;
 import nwsuaf.com.exam.util.KeyBoardUtils;
@@ -53,7 +55,10 @@ public class CreateClassActivity extends BaseActivity {
 
     private void createClass(final String key) {
         String url = new StringBuffer(AppConstants.LOCAL_HOST)
-                .append("/login").toString();
+                .append(AppConstants.WEBSERVER)
+                .append("/add")
+                .append("/group.do")
+                .toString();
                 /*.append("&stuid=")
                 .append(URLDecoder.decode(tv_id_uid.getText().toString()))
                 .append("&passwd=")
@@ -61,14 +66,13 @@ public class CreateClassActivity extends BaseActivity {
         OkHttpUtils
                 .get()
                 .url(url)
-                .addParams("teacherid", GetUserInfo.getPeo_id())
-                .addParams("classname", key)
+                .addParams("username", GetUserInfo.getPeo_id())
+                .addParams("groupname", key)
                 .build()
-                .execute(new LoginCallback(){
+                .execute(new CustomCallback(){
                     @Override
-                    public void onResponse(NetObject_Peo response, int id) {
-                        NetObject_Peo res = (NetObject_Peo) response;
-                        if (res.getCode().equals(AppConstants.SUCCESSLOGIN)) {
+                    public void onResponse(CustomResponse res, int id) {
+                        if (res.getCode().equals(AppConstants.SUCCESS_CREATE_CLASS)) {
                             Toast.makeText(CreateClassActivity.this, "创建成功！", Toast.LENGTH_SHORT).show();
                             mBitmap = CodeUtils.createImage(key, 400, 400, null);
                             mClassPic.setImageBitmap(mBitmap);

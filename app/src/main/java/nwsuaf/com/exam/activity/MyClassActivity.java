@@ -51,7 +51,9 @@ public class MyClassActivity extends BaseActivity {
 
     private void getClassListInfo() {
         String url = new StringBuffer(AppConstants.LOCAL_HOST)
-                .append("/getClassList").toString();
+                .append(AppConstants.WEBSERVER)
+                .append("/read")
+                .append("/group.do").toString();
                 /*.append("&stuid=")
                 .append(URLDecoder.decode(tv_id_uid.getText().toString()))
                 .append("&passwd=")
@@ -59,12 +61,11 @@ public class MyClassActivity extends BaseActivity {
         OkHttpUtils
                 .get()
                 .url(url)
-                .addParams("teacherid", GetUserInfo.getPeo_id())
+                .addParams("username", GetUserInfo.getPeo_id())
                 .build()
                 .execute(new ClassListCallback(){
                     @Override
-                    public void onResponse(NetObject_ClassList response, int id) {
-                        NetObject_ClassList res = (NetObject_ClassList) response;
+                    public void onResponse(NetObject_ClassList res, int id) {
                         if (res.getCode().equals(AppConstants.SUCCESS_GETCLASSLIST)) {
                             mData.clear();
                             mData.addAll(res.getData());
