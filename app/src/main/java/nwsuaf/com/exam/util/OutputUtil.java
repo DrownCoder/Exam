@@ -5,11 +5,18 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Environment;
+
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONStringer;
 
 @SuppressLint("WorldReadableFiles")
 public class OutputUtil<T> {
@@ -42,6 +49,32 @@ public class OutputUtil<T> {
         }
     }
 
+    public boolean writeStringIntoSDcard(String fileName,Object obj){
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            File sdCardDir = Environment.getExternalStorageDirectory();//获取sd卡目录
+            File sdFile = new File(sdCardDir, fileName);
+            try {
+                FileOutputStream fileOutputStream = new FileOutputStream(sdFile);
+                PrintStream ps = new PrintStream(new FileOutputStream(sdFile));
+                Gson gson = new Gson();
+                String str = gson.toJson(obj);
+                ps.append(str);
+                fileOutputStream.close();
+                ps.close();
+                return true;
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
     /**
      * 将对象写入sd卡
      *

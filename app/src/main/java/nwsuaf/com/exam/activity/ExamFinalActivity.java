@@ -19,7 +19,9 @@ import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import nwsuaf.com.exam.R;
@@ -42,6 +44,7 @@ import nwsuaf.com.exam.util.KeyBoardUtils;
 import nwsuaf.com.exam.util.OutputUtil;
 import nwsuaf.com.exam.util.SPUtils;
 import nwsuaf.com.exam.util.TimeUtils;
+import nwsuaf.com.exam.util.WebToolUtils;
 import okhttp3.Call;
 
 public class ExamFinalActivity extends BaseActivity {
@@ -307,7 +310,7 @@ public class ExamFinalActivity extends BaseActivity {
         OkHttpUtils
                 .get()
                 .url(url)
-                .addParams("classId", GetUserInfo.getClass_name())
+                .addParams("classname", GetUserInfo.getClass_name())
                 .build()
                 .execute(new ProblemCallback() {
                     @Override
@@ -341,15 +344,20 @@ public class ExamFinalActivity extends BaseActivity {
      */
     private void sentAnswerToNet() {
         String url = new StringBuffer(AppConstants.LOCAL_HOST)
-                .append("/sentAnswerToNet").toString();
+                .append(AppConstants.WEBSERVER)
+                .append("/file")
+                .append("/upload.do").toString();
+        Map<String, String> params = new HashMap<>();
+        params.put("myfile", AppConstants.LOCAL_ANSWER_BAK);
         File sdCardDir = Environment.getExternalStorageDirectory();//获取sd卡目录
         File sdFile = new File(sdCardDir, AppConstants.LOCAL_ANSWER_BAK);
         if (sdFile.exists()) {
             //提交文件
-            /*OkHttpUtils
-                    .postFile()
+            OkHttpUtils
+                    .post()
+                    .addFile("myfile",GetUserInfo.getPeo_id(),sdFile)
+                    .params(params)
                     .url(url)
-                    .file(sdFile)
                     .build()
                     .execute(new StringCallback() {
                         @Override
@@ -363,10 +371,10 @@ public class ExamFinalActivity extends BaseActivity {
                             dismissProgressDialog();
                             finish();
                         }
-                    });*/
+                    });
             //暂时先用GET测试
 
-            OkHttpUtils
+            /*OkHttpUtils
                     .get()
                     .url(url)
                     .build()
@@ -392,7 +400,7 @@ public class ExamFinalActivity extends BaseActivity {
                                 }
                             }, 10000);
                         }
-                    });
+                    });*/
         } else {
             Toast.makeText(ExamFinalActivity.this, "答案为空，提交失败！", Toast.LENGTH_SHORT).show();
         }
@@ -426,7 +434,7 @@ public class ExamFinalActivity extends BaseActivity {
         netAnswer.setData(mFAnswer);
         //备份答案到本地
         return new OutputUtil<NetObject_Answer>()
-                .writObjectIntoSDcard(AppConstants.LOCAL_ANSWER_BAK, netAnswer);
+                .writeStringIntoSDcard(AppConstants.LOCAL_ANSWER_BAK, netAnswer);
     }
 
     private void getAnswer() {
