@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -30,7 +28,8 @@ import nwsuaf.com.exam.adapter.FragmentAdapter;
 import nwsuaf.com.exam.app.AppConstants;
 import nwsuaf.com.exam.callback.ProblemCallback;
 import nwsuaf.com.exam.customview.CustomDialog;
-import nwsuaf.com.exam.entity.netmodel.CustomResponse;
+import nwsuaf.com.exam.entity.netmodel.AnswerItem;
+import nwsuaf.com.exam.entity.netmodel.CustomAnswer;
 import nwsuaf.com.exam.entity.netmodel.FAnswer;
 import nwsuaf.com.exam.entity.netmodel.NetObject_Answer;
 import nwsuaf.com.exam.entity.netmodel.NetObject_ProblemData;
@@ -44,7 +43,6 @@ import nwsuaf.com.exam.util.KeyBoardUtils;
 import nwsuaf.com.exam.util.OutputUtil;
 import nwsuaf.com.exam.util.SPUtils;
 import nwsuaf.com.exam.util.TimeUtils;
-import nwsuaf.com.exam.util.WebToolUtils;
 import okhttp3.Call;
 
 public class ExamFinalActivity extends BaseActivity {
@@ -372,35 +370,6 @@ public class ExamFinalActivity extends BaseActivity {
                             finish();
                         }
                     });
-            //暂时先用GET测试
-
-            /*OkHttpUtils
-                    .get()
-                    .url(url)
-                    .build()
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onError(Call call, Exception e, int id) {
-
-                        }
-
-                        @Override
-                        public void onResponse(final String response, int id) {
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    dismissProgressDialog();
-                                    CustomResponse res = new Gson().fromJson(response, CustomResponse.class);
-                                    if (res.getCode().equals(AppConstants.SUCCESS_SENTANSWER)) {
-                                        ToastMsg(ExamFinalActivity.this, res.getMsg());
-                                        finish();
-                                    } else {
-                                        ToastMsg(ExamFinalActivity.this, res.getMsg());
-                                    }
-                                }
-                            }, 10000);
-                        }
-                    });*/
         } else {
             Toast.makeText(ExamFinalActivity.this, "答案为空，提交失败！", Toast.LENGTH_SHORT).show();
         }
@@ -431,7 +400,27 @@ public class ExamFinalActivity extends BaseActivity {
         getAnswer();
         NetObject_Answer netAnswer = new NetObject_Answer();
         netAnswer.setId(GetUserInfo.getPeo_id());
-        netAnswer.setData(mFAnswer);
+        List<AnswerItem> answerItemList = new ArrayList<>();
+        for (FAnswer answer : mFAnswer) {
+            AnswerItem item = new AnswerItem();
+            item.setId(answer.getId());
+            List<CustomAnswer> answers = new ArrayList<>();
+            CustomAnswer ke = new CustomAnswer();
+            ke.setID("1");
+            ke.setVAL(answer.getKe());
+            CustomAnswer shu = new CustomAnswer();
+            shu.setID("2");
+            shu.setVAL(answer.getShu());
+            CustomAnswer zhong = new CustomAnswer();
+            zhong.setID("3");
+            zhong.setVAL(answer.getZhong());
+            answers.add(ke);
+            answers.add(shu);
+            answers.add(zhong);
+            item.setAnswers(answers);
+            answerItemList.add(item);
+        }
+        netAnswer.setData(answerItemList);
         //备份答案到本地
         return new OutputUtil<NetObject_Answer>()
                 .writeStringIntoSDcard(AppConstants.LOCAL_ANSWER_BAK, netAnswer);

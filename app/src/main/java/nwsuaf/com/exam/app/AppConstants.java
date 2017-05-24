@@ -42,7 +42,7 @@ public class AppConstants {
     /**
      * 服务器
      */
-    public static final String LOCAL_HOST                  ="http://192.168.139.1:8080";
+    public static final String LOCAL_HOST                  ="http://192.168.139.1:8080/exam";
     public static final String WEBSERVER                   ="/api";
     public final static String DONTEXIST = "100";
     public final static String WRONGPASSWORD = "200";

@@ -1,12 +1,9 @@
 package nwsuaf.com.exam.activity;
 
-import android.app.Activity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
 
-import java.lang.ref.WeakReference;
 
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.base.BaseActivity;
@@ -22,6 +19,7 @@ public class ImageDetailActivity extends BaseActivity {
         TopView();
         initViews();
         initDatas();
+        setLeftBack();
     }
 
     private void initDatas() {

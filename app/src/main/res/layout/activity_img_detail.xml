@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <include layout="@layout/top" />
     <uk.co.senab.photoview.PhotoView
         android:layout_centerInParent="true"
         android:id="@+id/pv_touch"

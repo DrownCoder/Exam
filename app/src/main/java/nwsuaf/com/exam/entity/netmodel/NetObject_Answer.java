@@ -8,7 +8,7 @@ import java.util.List;
 
 public class NetObject_Answer implements Serializable{
     private String id;
-    private List<FAnswer> data;
+    private List<AnswerItem> data;
 
     public String getId() {
         return id;
@@ -18,11 +18,11 @@ public class NetObject_Answer implements Serializable{
         this.id = id;
     }
 
-    public List<FAnswer> getData() {
+    public List<AnswerItem> getData() {
         return data;
     }
 
-    public void setData(List<FAnswer> data) {
+    public void setData(List<AnswerItem> data) {
         this.data = data;
     }
 }
