@@ -27,17 +27,17 @@ public class MainApplication extends Application
         super.onCreate();
         //initRequestQueue();
         ZXingLibrary.initDisplayOpinion(this);
-        if (LeakCanary.isInAnalyzerProcess(this)) {
+        /*if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
             return;
         }
-        LeakCanary.install(this);
+        LeakCanary.install(this);*/
         //initImageLoader();
         instance = this;
     }
 
-    public static MainApplication getIns()
+    public static MainApplication getInstance()
     {
         return instance;
     }

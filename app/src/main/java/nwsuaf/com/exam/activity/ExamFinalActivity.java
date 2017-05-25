@@ -1,10 +1,13 @@
 package nwsuaf.com.exam.activity;
 
+import android.Manifest;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -26,10 +29,12 @@ import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.base.BaseActivity;
 import nwsuaf.com.exam.adapter.FragmentAdapter;
 import nwsuaf.com.exam.app.AppConstants;
+import nwsuaf.com.exam.callback.CustomCallback;
 import nwsuaf.com.exam.callback.ProblemCallback;
 import nwsuaf.com.exam.customview.CustomDialog;
 import nwsuaf.com.exam.entity.netmodel.AnswerItem;
 import nwsuaf.com.exam.entity.netmodel.CustomAnswer;
+import nwsuaf.com.exam.entity.netmodel.CustomResponse;
 import nwsuaf.com.exam.entity.netmodel.FAnswer;
 import nwsuaf.com.exam.entity.netmodel.NetObject_Answer;
 import nwsuaf.com.exam.entity.netmodel.NetObject_ProblemData;
@@ -38,6 +43,7 @@ import nwsuaf.com.exam.fragment.ExamDetailFragment;
 import nwsuaf.com.exam.service.FAnswerService;
 import nwsuaf.com.exam.util.FileUtils;
 import nwsuaf.com.exam.util.GetUserInfo;
+import nwsuaf.com.exam.util.GlideCatchUtil;
 import nwsuaf.com.exam.util.InputUtil;
 import nwsuaf.com.exam.util.KeyBoardUtils;
 import nwsuaf.com.exam.util.OutputUtil;
@@ -64,11 +70,19 @@ public class ExamFinalActivity extends BaseActivity {
     //用于中断线程
     private AtomicBoolean mIsServiceDestoryed = new AtomicBoolean(false);
 
+
+    // Storage Permissions
+    private static final int REQUEST_EXTERNAL_STORAGE = 1;
+    private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exam_final);
         TopView();
+        initPermission();
         initView();
         initData();
         initEvent();
@@ -76,11 +90,26 @@ public class ExamFinalActivity extends BaseActivity {
         saveAnswertoLocal();
     }
 
+    private void initPermission() {
+
+// Check if we have write permission
+        int permission = ActivityCompat.checkSelfPermission(ExamFinalActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // We don't have permission so prompt the user
+            ActivityCompat.requestPermissions(
+                    ExamFinalActivity.this,
+                    PERMISSIONS_STORAGE,
+                    REQUEST_EXTERNAL_STORAGE
+            );
+        }
+    }
+
     private void initEvent() {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 KeyBoardUtils.closeKeybord(ExamFinalActivity.this);
+
             }
 
             @Override
@@ -135,9 +164,8 @@ public class ExamFinalActivity extends BaseActivity {
         mFragments = new ArrayList<>();
         mFAnswer = new ArrayList<>();
         answerService = new FAnswerService(ExamFinalActivity.this);
-        //getProblemDate();
-        new GetDataTask().execute();
-        //mAdapter = new ExamAdapter(ExamFinalActivity.this , mData ,mFAnswer);
+        //new GetDataTask().execute();
+        getDataFromNet();
         mAdapter = new FragmentAdapter(getSupportFragmentManager(), mFragments);
         mViewPager.setAdapter(mAdapter);
     }
@@ -194,7 +222,7 @@ public class ExamFinalActivity extends BaseActivity {
      *
      * @param size
      */
-    private void create(int size) {
+    private void create(int size, boolean notify) {
         CreateAnswers(size);
 
         for (int i = 0; i < size; i++) {
@@ -203,7 +231,9 @@ public class ExamFinalActivity extends BaseActivity {
             fragment.setAnswer(mFAnswer.get(i));
             mFragments.add(fragment);
         }
-        mAdapter.notifyDataSetChanged();
+        if (notify) {
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     private void initView() {
@@ -272,17 +302,19 @@ public class ExamFinalActivity extends BaseActivity {
     private class GetDataTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            if (CheckNetData()) {
+            /*if (CheckNetData()) {
                 mData.clear();
                 mData.addAll(localdata.getData());
-                create(mData.size());
+                create(mData.size(),false);
                 mCurrentTime = Long.valueOf(String.valueOf(SPUtils.get(ExamFinalActivity.this
                         , "lasttime", default_time)));
             } else {
                 getDataFromNet();
                 return "NET";
             }
-            return "LOCAL";
+            return "LOCAL";*/
+            getDataFromNet();
+            return "NET";
         }
 
         @Override
@@ -309,6 +341,7 @@ public class ExamFinalActivity extends BaseActivity {
                 .get()
                 .url(url)
                 .addParams("classname", GetUserInfo.getClass_name())
+                .addParams("uid",GetUserInfo.getPeo_id())
                 .build()
                 .execute(new ProblemCallback() {
                     @Override
@@ -317,19 +350,25 @@ public class ExamFinalActivity extends BaseActivity {
                         if (res.getCode().equals(AppConstants.SUCCESS_GETPROBLEM)) {
                             mData.clear();
                             mData.addAll(res.getData());
-                            create(mData.size());
-                            setTitle(TimeUtils.formatTime(res.getTime()));
+                            create(mData.size(),true);
+                            long time = res.getTime();
+                            if (SPUtils.contains(ExamFinalActivity.this, "lasttime")) {
+                                time= Long.valueOf(String.valueOf(SPUtils.get(ExamFinalActivity.this
+                                        , "lasttime", default_time)));
+                                mCurrentTime = time;
+                            }
+                            setTitle(TimeUtils.formatTime(time));
                             onLoading(false);
-                            startCountDownTimer(res.getTime());
+                            startCountDownTimer(time);
 
-                            new Thread(new Runnable() {
+                           /* new Thread(new Runnable() {
                                 @Override
                                 public void run() {
                                     //备份数据到本地
                                     new OutputUtil<NetObject_ProblemData>()
                                             .writObjectIntoSDcard(AppConstants.LOCAL_DATA_BAK, res);
                                 }
-                            }).start();
+                            }).start();*/
                         } else {
                             Toast.makeText(ExamFinalActivity.this, res.getMsg(), Toast.LENGTH_SHORT).show();
                         }
@@ -357,15 +396,16 @@ public class ExamFinalActivity extends BaseActivity {
                     .params(params)
                     .url(url)
                     .build()
-                    .execute(new StringCallback() {
+                    .execute(new CustomCallback() {
                         @Override
                         public void onError(Call call, Exception e, int id) {
 
                         }
                         @Override
-                        public void onResponse(String response, int id) {
-                            Toast.makeText(ExamFinalActivity.this, response, Toast.LENGTH_SHORT).show();
+                        public void onResponse(CustomResponse response, int id) {
+                            Toast.makeText(ExamFinalActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
                             FileUtils.delFile("examcache.out");
+                            SPUtils.remove(ExamFinalActivity.this, "lasttime");
                             dismissProgressDialog();
                             finish();
                         }

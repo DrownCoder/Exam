@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,7 @@ public class TeacherLoginFragment extends Fragment {
                      */
                     teaLoginToNet();
                 }else{
-                    Toast.makeText(getActivity(), "请填写完整登录信息", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "请填写完整登录信息", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -93,17 +94,17 @@ public class TeacherLoginFragment extends Fragment {
                     @Override
                     public void onResponse(NetObject_Peo res, int id) {
                         if (res.getCode().equals(AppConstants.SUCCESSLOGIN)) {
-                            Toast.makeText(getActivity(), "登录成功！", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), "登录成功！", Toast.LENGTH_SHORT).show();
                             UserInfo info = res.getData();
                             GetUserInfo.setClass_name(info.getStuclass());
                             GetUserInfo.setPeo_id(info.getStuid());
                             GetUserInfo.setPeo_name(info.getStuname());
                             GetUserInfo.setIsGet(true);
-                            Intent intent = new Intent(getActivity(), TeacherActivity.class);
+                            Intent intent = new Intent(getContext(), TeacherActivity.class);
                             startActivity(intent);
                             getActivity().finish();
                         }else{
-                            Toast.makeText(getActivity(),res.getMsg(),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(),res.getMsg(),Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

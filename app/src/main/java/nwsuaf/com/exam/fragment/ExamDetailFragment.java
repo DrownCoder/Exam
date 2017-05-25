@@ -10,6 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+import com.bumptech.glide.Glide;
 
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.ExamFinalActivity;
@@ -38,7 +42,7 @@ public class ExamDetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.exam_final_layout, container, false);
         initView(view);
-        initEvents();
+        //initEvents();
         return view;
     }
 
@@ -84,7 +88,7 @@ public class ExamDetailFragment extends Fragment {
             anske = ke.getText().toString();
         }
         if(shu != null && !TextUtils.isEmpty(shu.getText().toString())){
-            ansshu = ke.getText().toString();
+            ansshu = shu.getText().toString();
         }
         if(zhong != null && !TextUtils.isEmpty(zhong.getText().toString())){
             anszhong = zhong.getText().toString();
@@ -94,5 +98,12 @@ public class ExamDetailFragment extends Fragment {
         FAnswer.setShu(ansshu);
         FAnswer.setZhong(anszhong);
         return FAnswer;
+    }
+
+    public void clearViewCache(){
+        for(int i = 0;i<mData.getImgList().size();i++) {
+            ImageView view = (ImageView) ((RelativeLayout) mRcyPicList.getChildAt(i)).getChildAt(0);
+            Glide.clear(view);
+        }
     }
 }

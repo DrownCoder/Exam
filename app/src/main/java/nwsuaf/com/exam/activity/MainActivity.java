@@ -1,11 +1,9 @@
 package nwsuaf.com.exam.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -19,7 +17,6 @@ import java.util.List;
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.base.BaseActivity;
 import nwsuaf.com.exam.adapter.LoginFragmentAdapter;
-import nwsuaf.com.exam.app.AppConstants;
 import nwsuaf.com.exam.fragment.StudentLoginFragment;
 import nwsuaf.com.exam.fragment.TeacherLoginFragment;
 
@@ -119,7 +116,7 @@ public class MainActivity extends BaseActivity {
                 }
                 if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                     String result = bundle.getString(CodeUtils.RESULT_STRING);
-                    stuFragment.setClassName(result);
+                    //stuFragment.setClassName(result);
                     Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
                 } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
                     Toast.makeText(MainActivity.this, "解析二维码失败", Toast.LENGTH_LONG).show();

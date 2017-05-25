@@ -58,7 +58,7 @@ public class DBController
 
         if (daoSchoolSession == null)
         {
-            daoSchoolSession = getSchoolDaoMaster(MainApplication.getIns(), dbName).newSession();
+            daoSchoolSession = getSchoolDaoMaster(MainApplication.getInstance(), dbName).newSession();
         }
         return daoSchoolSession;
     }
@@ -68,7 +68,7 @@ public class DBController
 
         if (daoSessionDefault == null)
         {
-            daoSessionDefault = getDaoMaster(MainApplication.getIns(), DATABASE_NAME).newSession();
+            daoSessionDefault = getDaoMaster(MainApplication.getInstance(), DATABASE_NAME).newSession();
         }
         return daoSessionDefault;
     }

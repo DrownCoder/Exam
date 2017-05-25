@@ -51,12 +51,12 @@ public class PicAdapter extends RecyclerView.Adapter<PicAdapter.ViewHolder> {
                     .error(R.drawable.pic_error)
                     .crossFade()
                     .into(holder.img);
-            holder.img.setOnClickListener(new View.OnClickListener() {
+            /*holder.img.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     mOnItemClickListener.onItemClick(position);
                 }
-            });
+            });*/
         }
     }
 
