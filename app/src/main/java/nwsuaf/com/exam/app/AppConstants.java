@@ -68,4 +68,8 @@ public class AppConstants {
      * 倒计时
      */
     public static final int WAIT_SENT_TIME = 10000;                             //发卷倒计时
+    /**
+     * 重复进入考试判断
+     */
+    public static boolean ISSTARTED = false;                               //是否能进入考试
 }

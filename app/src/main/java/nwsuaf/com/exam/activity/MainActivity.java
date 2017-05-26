@@ -17,6 +17,7 @@ import java.util.List;
 import nwsuaf.com.exam.R;
 import nwsuaf.com.exam.activity.base.BaseActivity;
 import nwsuaf.com.exam.adapter.LoginFragmentAdapter;
+import nwsuaf.com.exam.app.AppConstants;
 import nwsuaf.com.exam.fragment.StudentLoginFragment;
 import nwsuaf.com.exam.fragment.TeacherLoginFragment;
 
@@ -41,6 +42,12 @@ public class MainActivity extends BaseActivity {
         TopView();
         initViews();
         initEvents();
+    }
+
+    @Override
+    protected void onDestroy() {
+        AppConstants.ISSTARTED = false;
+        super.onDestroy();
     }
 
     private void initEvents() {

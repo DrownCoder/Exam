@@ -29,7 +29,6 @@ import nwsuaf.com.exam.util.GetUserInfo;
 public class ExamFragment extends Fragment implements View.OnClickListener {
     private SubmitButton bt_id_exam;
     private RelativeLayout rl_id_mineexam;
-    private boolean isStarted;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,13 +58,12 @@ public class ExamFragment extends Fragment implements View.OnClickListener {
                     new Handler().postDelayed(new Runnable() {
 
                         public void run() {
-                            if(!isStarted){
+                            if(!AppConstants.ISSTARTED){
                                 bt_id_exam.startAnimation();
                                 //获取题目
                                 GetNetProblem();
-                                isStarted = true;
                             }else {
-                                Toast.makeText(getContext(), "已进入考试，请勿重复进入", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getContext(), "已完成考试，请勿重复进入", Toast.LENGTH_LONG).show();
                             }
                         }
 

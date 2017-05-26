@@ -10,6 +10,5 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:scaleType="fitCenter"
-        android:src="@mipmap/ic_launcher"
         android:padding="5dp" />
 </RelativeLayout>

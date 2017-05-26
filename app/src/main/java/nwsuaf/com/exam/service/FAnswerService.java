@@ -42,9 +42,13 @@ public class FAnswerService {
      * @return
      */
     public void inserAnswer(List<FAnswer> data){
-        for(FAnswer item:data){
-            answerDao.insertOrReplace(item);
+        for(int i = 0;i<data.size();i++) {
+            data.get(i).setId(String.valueOf(i));
+            answerDao.insertOrReplace(data.get(i));
         }
+        /*for(FAnswer item:data){
+            answerDao.insertOrReplace(item);
+        }*/
     }
 
     /**

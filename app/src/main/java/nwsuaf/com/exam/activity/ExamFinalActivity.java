@@ -77,6 +77,7 @@ public class ExamFinalActivity extends BaseActivity {
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -272,7 +273,7 @@ public class ExamFinalActivity extends BaseActivity {
                 if (saveAnswerToLocal()) {
                     result = "答案保存成功";
                     answerService.deleteAll();
-                    FileUtils.delFile(AppConstants.LOCAL_DATA_BAK);
+                    //FileUtils.delFile(AppConstants.LOCAL_DATA_BAK);
                     sentAnswerToNet();
                 } else {
                     result = "答案保存失败";
@@ -320,7 +321,7 @@ public class ExamFinalActivity extends BaseActivity {
         @Override
         protected void onPostExecute(String s) {
             Log.i("type", s);
-            if(s.equals("LOCAL")){
+            if (s.equals("LOCAL")) {
                 mAdapter.notifyDataSetChanged();
                 setTitle(TimeUtils.formatTime(mCurrentTime));
                 onLoading(false);
@@ -341,7 +342,7 @@ public class ExamFinalActivity extends BaseActivity {
                 .get()
                 .url(url)
                 .addParams("classname", GetUserInfo.getClass_name())
-                .addParams("uid",GetUserInfo.getPeo_id())
+                .addParams("uid", GetUserInfo.getPeo_id())
                 .build()
                 .execute(new ProblemCallback() {
                     @Override
@@ -350,10 +351,10 @@ public class ExamFinalActivity extends BaseActivity {
                         if (res.getCode().equals(AppConstants.SUCCESS_GETPROBLEM)) {
                             mData.clear();
                             mData.addAll(res.getData());
-                            create(mData.size(),true);
+                            create(mData.size(), true);
                             long time = res.getTime();
                             if (SPUtils.contains(ExamFinalActivity.this, "lasttime")) {
-                                time= Long.valueOf(String.valueOf(SPUtils.get(ExamFinalActivity.this
+                                time = Long.valueOf(String.valueOf(SPUtils.get(ExamFinalActivity.this
                                         , "lasttime", default_time)));
                                 mCurrentTime = time;
                             }
@@ -392,7 +393,7 @@ public class ExamFinalActivity extends BaseActivity {
             //提交文件
             OkHttpUtils
                     .post()
-                    .addFile("myfile",GetUserInfo.getPeo_id(),sdFile)
+                    .addFile("myfile", GetUserInfo.getPeo_id(), sdFile)
                     .params(params)
                     .url(url)
                     .build()
@@ -401,13 +402,21 @@ public class ExamFinalActivity extends BaseActivity {
                         public void onError(Call call, Exception e, int id) {
 
                         }
+
                         @Override
                         public void onResponse(CustomResponse response, int id) {
-                            Toast.makeText(ExamFinalActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
-                            FileUtils.delFile("examcache.out");
-                            SPUtils.remove(ExamFinalActivity.this, "lasttime");
-                            dismissProgressDialog();
-                            finish();
+                            if (response.getCode().equals(AppConstants.INSERTSUCCESS)) {
+                                Toast.makeText(ExamFinalActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                                AppConstants.ISSTARTED = true;
+                                SPUtils.clear(ExamFinalActivity.this);
+                                dismissProgressDialog();
+                                finish();
+                            }else{
+                                Toast.makeText(ExamFinalActivity.this, response.getMsg(), Toast.LENGTH_SHORT).show();
+                                SPUtils.clear(ExamFinalActivity.this);
+                                AppConstants.ISSTARTED = true;
+                                dismissProgressDialog();
+                            }
                         }
                     });
         } else {
@@ -419,7 +428,8 @@ public class ExamFinalActivity extends BaseActivity {
      * 初始化Answer
      */
     private void CreateAnswers(int size) {
-        if (answerService.getGroupData().size() <= 0 || !CheckNetData()) {
+        //if (answerService.getGroupData().size() <= 0 || !CheckNetData()) {
+        if (answerService.getGroupData().size() <= 0) {
             if (mFAnswer.size() <= 0) {
                 for (int i = 0; i < size; i++) {
                     FAnswer item = new FAnswer();
@@ -429,7 +439,6 @@ public class ExamFinalActivity extends BaseActivity {
         } else {
             //如果是崩溃重新进入情况
             mFAnswer = answerService.getGroupData();
-            Log.i("size", "" + answerService.getGroupData().size());
         }
     }
 
@@ -495,9 +504,11 @@ public class ExamFinalActivity extends BaseActivity {
                     e.printStackTrace();
                 }
                 Log.i("Mcache", "执行");
-                getAnswer();
-                answerService.inserAnswer(mFAnswer);
-                SPUtils.put(ExamFinalActivity.this, "lasttime", mCurrentTime);
+                if (!AppConstants.ISSTARTED) {
+                    getAnswer();
+                    answerService.inserAnswer(mFAnswer);
+                    SPUtils.put(ExamFinalActivity.this, "lasttime", mCurrentTime);
+                }
             }
         }
     }
