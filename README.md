@@ -1,6 +1,8 @@
 # Exam
 GreenDao+Okhttp+Glide+Material Design+ZXing+自定义View 考试系统app
 >毕业设计做的app,还算比较完整的项目
+#### 需求
+![需求](https://github.com/sdfdzx/Exam/blob/master/use.png)
 #### 技术点
 ![技术点](https://github.com/sdfdzx/Exam/blob/master/key.png)
 #### 缓存设计1
